@@ -3,15 +3,20 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
 
+  :repositories [["cognitect-dev-tools" {:url      "https://dev-tools.cognitect.com/maven/releases/"
+                                         :username :env
+                                         :password :env}]]
+
   :dependencies [[ch.qos.logback/logback-classic "1.2.5"]
                  [clojure.java-time "0.3.3"]
-                 [com.datomic/datomic-free "0.9.5697" :exclusions [org.slf4j/log4j-over-slf4j org.slf4j/slf4j-nop com.google.guava/guava]]
+                 #_[com.datomic/datomic-free "0.9.5697" :exclusions [org.slf4j/log4j-over-slf4j org.slf4j/slf4j-nop com.google.guava/guava]]
+                 [com.datomic/dev-local "0.9.235"]
                  [com.google.guava/guava "25.1-jre"]
                  [cprop "0.1.19"]
                  [expound "0.8.9"]
                  [funcool/cuerdas "2021.05.29-0"]
                  [funcool/struct "1.4.0"]
-                 [io.rkn/conformity "0.5.1"]
+                 #_[io.rkn/conformity "0.5.1"]
                  [json-html "0.4.7"]
                  [luminus-aleph "0.1.6"]
                  [luminus-transit "0.1.2"]
