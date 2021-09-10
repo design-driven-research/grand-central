@@ -1,2 +1,5 @@
-{:linters {:mount/defstate {:level :warning}}
- :hooks {:analyze-call {mount.core/defstate hooks.defstate/defstate}}}
+#_{:linters {:mount/defstate {:level :warning}}
+   :lint-as {mount.core/defstate clojure.core/def}
+   :hooks {:analyze-call {mount.core/defstate hooks.defstate/defstate}}}
+
+{:lint-as {mount.core/defstate clojure.core/def}}

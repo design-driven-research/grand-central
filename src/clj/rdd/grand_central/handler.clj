@@ -3,7 +3,7 @@
             [rdd.grand-central.env :refer [defaults]]
             [rdd.grand-central.middleware :as middleware]
             [rdd.grand-central.routes.services :refer [service-routes]]
-            [rdd.grand-central.routes.websockets :refer [websocket-routes]]
+            [rdd.grand-central.services.socket-server :as ss]
             [reitit.ring :as ring]
             [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.webjars :refer [wrap-webjars]]))
@@ -19,7 +19,7 @@
     [["/" {:get
            {:handler (constantly {:status 301 :headers {"Location" "/api/api-docs/index.html"}})}}]
      (service-routes)
-     (websocket-routes)])
+     (:routes ss/socket-connection)])
    (ring/routes
     (ring/create-resource-handler
      {:path "/"})

@@ -1,35 +1,34 @@
 {
-        "calva.customREPLCommandSnippets": [
-        {
-            "name": "Start grand-central Server",
-            "ns": "user",
-            "repl": "clj",
-            "snippet": "(start)"
-        },
-        {
-            "name": "Stop grand-central Server",
-            "ns": "user",
-            "repl": "clj",
-            "snippet": "(stop)"
-        },
-        {
-            "name": "Restart grand-central Server",
-            "ns": "user",
-            "repl": "clj",
-            "snippet": "(restart)"
-        }
-    ],
-    "calva.replConnectSequences": [
-                {
-            "name": "grand-central Server",
-            "projectType": "Leiningen",
-            "afterCLJReplJackInCode": "(in-ns 'user) (start) (println \"Access the server at http://localhost:3000\")",
-            "cljsType": "none",
-            "menuSelections": {
-                "leinProfiles": [
-                    "dev"
-                ]
-            }
-        }
-    ]
+  "calva.customREPLCommandSnippets": [
+    {
+      "name": "Start grand-central Server",
+      "ns": "user",
+      "repl": "clj",
+      "snippet": "(start)"
+    },
+    {
+      "name": "Stop grand-central Server",
+      "ns": "user",
+      "repl": "clj",
+      "snippet": "(stop)"
+    },
+    {
+      "name": "Restart grand-central Server",
+      "ns": "user",
+      "repl": "clj",
+      "snippet": "(restart)"
+    }
+  ],
+  "calva.replConnectSequences": [
+    {
+      "name": "Grand Central - Server + Reveal",
+      "projectType": "Leiningen",
+      "afterCLJReplJackInCode": "(in-ns 'user) (start) (println \"Access the server at http://localhost:3000\")",
+      "cljsType": "none",
+      "menuSelections": {
+        "leinProfiles": ["dev", "reveal"]
+      }
+    }
+  ],
+  "files.exclude": {}
 }

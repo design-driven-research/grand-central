@@ -1,45 +1,134 @@
 {;; norm1 installs the user table schema into Datomic
- :project-name/norm1 {:txes [[
-   {:db/doc                "User ID"
-    :db/ident              :user/id
-    :db/valueType          :db.type/string
-    :db/cardinality        :db.cardinality/one
-    :db/id                 #db/id [:db.part/db]
-    :db.install/_attribute :db.part/db}
-   {:db/doc                "User screen name"
-    :db/ident              :user/name
-    :db/valueType          :db.type/string
-    :db/cardinality        :db.cardinality/one
-    :db/id                 #db/id [:db.part/db]
-    :db.install/_attribute :db.part/db}
-   {:db/doc                "User email address"
-    :db/ident              :user/email
-    :db/valueType          :db.type/string
-    :db/cardinality        :db.cardinality/one
-    :db/unique             :db.unique/identity
-    :db/id                 #db/id [:db.part/db]
-    :db.install/_attribute :db.part/db}
-   {:db/doc                "User status"
-    :db/ident              :user/status
-    :db/valueType          :db.type/ref
-    :db/cardinality        :db.cardinality/one
-    :db/id                 #db/id [:db.part/db]
-    :db.install/_attribute :db.part/db}
-   ;; example of enumeration in Datomic
-   [:db/add #db/id [:db.part/user] :db/ident :user.status/pending]
-   [:db/add #db/id [:db.part/user] :db/ident :user.status/active]
-   [:db/add #db/id [:db.part/user] :db/ident :user.status/inactive]
-   [:db/add #db/id [:db.part/user] :db/ident :user.status/cancelled]]]}
+ :grand-central/norm1 {:txes [[{:db/ident :units.system/IMPERIAL}
+                               {:db/ident :units.system/METRIC}
 
- ;; norm2 installs certain user init data into Datomic for testing purpose
- :project-name/norm2 {:txes [[
-   {:user/id     "abc"
-    :user/name   "Good Name A"
-    :user/email  "abc@example.com"
-    :user/status :user.status/active}
+                               {:db/ident :units.type/WEIGHT}
+                               {:db/ident :units.type/VOLUME}
+                               {:db/ident :units.type/CUSTOM}
 
-   {:user/id     "efg"
-    :user/name   "Good Name B"
-    :user/email  "efg@example.com"
-    :user/status :user.status/active}]]}
-}
+                              ;;  Nodes
+                               {:db/doc "Node name"
+                                :db/ident :node/name
+                                :db/unique :db.unique/identity
+                                :db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/doc "Node description"
+                                :db/ident :node/description
+                                :db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :node/yield
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :node/children
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many
+                                :db/isComponent true}
+
+                               {:db/ident :node/parents
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many
+                                :db/isComponent true}
+
+                               {:db/ident :node/uom
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :node/categories
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many}
+
+                               {:db/ident :node/tags
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many}
+
+                              ;;  Categories
+                               {:db/ident :category/name
+                                :db/unique :db.unique/identity
+                                :db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :category/parents
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/many}
+
+                              ;;  Tag
+                               {:db/ident :tag/name
+                                :db/unique :db.unique/identity
+                                :db/valueType :db.type/string
+                                :db/cardinality :db.cardinality/one}
+
+                              ;;  Edges
+                               {:db/ident :edge/parent
+                                :db/cardinality :db.cardinality/one
+                                :db/valueType :db.type/ref}
+
+                               {:db/ident :edge/child
+                                :db/cardinality :db.cardinality/one
+                                :db/valueType :db.type/ref}
+
+                               {:db/ident :edge/uom
+                                :db/cardinality :db.cardinality/one
+                                :db/valueType :db.type/ref}
+
+                               {:db/ident :edge/quantity
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :uom/name
+                                :db/valueType :db.type/string
+                                :db/unique :db.unique/identity
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :uom/code
+                                :db/valueType :db.type/string
+                                :db/unique :db.unique/identity
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :uom/type
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :uom/system
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :uom/factor
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+
+                              ;;  Conversions
+                               {:db/ident :conversion/node
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :conversion/from
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :conversion/to
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :conversion/factor
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+
+                              ;;  Costs
+                               {:db/ident :cost/uom
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :cost/node
+                                :db/valueType :db.type/ref
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :cost/cost
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}
+
+                               {:db/ident :cost/quantity
+                                :db/valueType :db.type/double
+                                :db/cardinality :db.cardinality/one}]]}}
