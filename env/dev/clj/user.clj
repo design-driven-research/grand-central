@@ -115,23 +115,225 @@
                [?ident :db/ident]]
              (d/db conn) "Chorizo Wrap"))
 
-(def rules '[[(edge ?node ?subnode)
-              [?node :node/children ?edge]
-              [?edge :edge/child ?subnode]
-              (values ?subnode ?ident ?attr ?val _)]
-             [(values ?e ?ident ?attr ?val ?subnode)
-              [?attr :db/ident ?ident]
-              [?e ?ident ?val]
-              (edge ?e ?subnode)]])
+#_(def rules '[[(values [?node] ?edge)
+                [?node :node/children ?edge]
+                (values ?edge ?node)]
 
-(time (d/q '[:find ?e ?ident ?attr ?val ?subnode
-             :keys id key attr val sub
-             :in $ %
-             :where
-             [?e :node/name "Chorizo Wrap"]
-             (values ?e ?ident ?attr ?val ?subnode)]
+               [(values [?edge] ?node)
+                [?edge :edge/child ?subnode]
+                (values ?subnode ?edge)]
 
-           (d/db conn) rules))
+               #_[(values [?node] ?edge)
+                  [(ground "no edges") ?edge]
+                  [(ground "no subnodes") ?node]]
+
+               #_[(values ?node ?edge ?subnode)
+                  [(ground "no edges") ?edge]
+                  [(ground "no nodes") ?node]
+                  [(ground "no subnodes") ?subnode]]
+
+               #_[(edge ?edge ?node)
+                  [?edge :edge/child ?node]
+                  (values ?node _ _)
+
+
+                  #_(values ?subnode ?ident ?attr ?val ?other)]
+
+               #_[(values ?e ?ident ?attr ?val ?subnode)
+                  [?attr :db/ident ?ident]
+                  [?e ?ident ?val]
+                  [(ground "NOTHING") ?subnode]
+                  #_[?e :node/children ?subnode]]])
+
+#_(->> (d/q '[:find ?node ?edge ?subnode
+              :in $ %
+              :where
+              [?node :node/name "Chorizo Wrap"]
+              (values ?node ?edge ?subnode)]
+
+            (d/db conn) rules)
+       first
+       #_(map (fn [id] (d/pull (d/db conn) [:node/name :db/id] id))))
+;; => [74766790688889 "no edges" "no subnodes"]
+
+;; => ({:db/id 74766790688889, :node/name "Chorizo Wrap"}
+;;     {:db/id 74766790688896,
+;;      :edge/parent #:db{:id 74766790688889},
+;;      :edge/child #:db{:id 74766790688888},
+;;      :edge/uom #:db{:id 83562883711081},
+;;      :edge/quantity 10.0,
+;;      :node/_children ...,
+;;      :node/_parents ...}
+;;     {:db/id 74766790688888, :node/name "Master Sauce"})
+
+;; => ({:db/id 74766790688889, :node/name "Chorizo Wrap"}
+;;     {:db/id 74766790688896,
+;;      :edge/parent #:db{:id 74766790688889},
+;;      :edge/child #:db{:id 74766790688888},
+;;      :edge/uom #:db{:id 83562883711081},
+;;      :edge/quantity 10.0,
+;;      :node/_children ...,
+;;      :node/_parents ...}
+;;     {:db/id 74766790688888, :node/name "Master Sauce"})
+
+;; => (#:node{:name "Chorizo Wrap"} nil #:node{:name "Master Sauce"})
+
+;; => ({:db/id 74766790688889,
+;;      :node/name "Chorizo Wrap",
+;;      :node/yield 1.0,
+;;      :node/children
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...}
+;;     {:db/id 74766790688896,
+;;      :edge/parent #:db{:id 74766790688889},
+;;      :edge/child #:db{:id 74766790688888},
+;;      :edge/uom #:db{:id 83562883711081},
+;;      :edge/quantity 10.0,
+;;      :node/_children ...,
+;;      :node/_parents ...}
+;;     {:db/id 74766790688888,
+;;      :node/name "Master Sauce",
+;;      :node/yield 100.0,
+;;      :node/children
+;;      [{:db/id 74766790688895,
+;;        :edge/parent #:db{:id 74766790688888},
+;;        :edge/child #:db{:id 74766790688887},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/parents
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...,
+;;      :edge/_child ...})
+
+;; => (#:node{:name "Chorizo Wrap"} nil #:node{:name "Master Sauce"})
+
+;; => [74766790688889 "NOTHING" "NOTHING"]
+
+;; => (#:node{:name "Chorizo Wrap"} nil nil)
+
+;; => ({:db/id 74766790688889,
+;;      :node/name "Chorizo Wrap",
+;;      :node/yield 1.0,
+;;      :node/children
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...}
+;;     #:db{:id nil}
+;;     #:db{:id nil})
+
+;; => ({:db/id 74766790688889,
+;;      :node/name "Chorizo Wrap",
+;;      :node/yield 1.0,
+;;      :node/children
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...}
+;;     {:db/id 74766790688896,
+;;      :edge/parent #:db{:id 74766790688889},
+;;      :edge/child #:db{:id 74766790688888},
+;;      :edge/uom #:db{:id 83562883711081},
+;;      :edge/quantity 10.0,
+;;      :node/_children ...,
+;;      :node/_parents ...}
+;;     {:db/id 74766790688888,
+;;      :node/name "Master Sauce",
+;;      :node/yield 100.0,
+;;      :node/children
+;;      [{:db/id 74766790688895,
+;;        :edge/parent #:db{:id 74766790688888},
+;;        :edge/child #:db{:id 74766790688887},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/parents
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...,
+;;      :edge/_child ...})
+
+;; => Execution error (IndexOutOfBoundsException) at datomic.core.datalog/join-project-coll-with$project (datalog.clj:226).
+;;    null
+
+;; => ({:db/id 74766790688889,
+;;      :node/name "Chorizo Wrap",
+;;      :node/yield 1.0,
+;;      :node/children
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...}
+;;     {:db/id 74766790688888,
+;;      :node/name "Master Sauce",
+;;      :node/yield 100.0,
+;;      :node/children
+;;      [{:db/id 74766790688895,
+;;        :edge/parent #:db{:id 74766790688888},
+;;        :edge/child #:db{:id 74766790688887},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/parents
+;;      [{:db/id 74766790688896,
+;;        :edge/parent #:db{:id 74766790688889},
+;;        :edge/child #:db{:id 74766790688888},
+;;        :edge/uom #:db{:id 83562883711081},
+;;        :edge/quantity 10.0}],
+;;      :node/uom #:db{:id 83562883711081},
+;;      :edge/_parent ...,
+;;      :edge/_child ...})
+
+
+(d/pull (d/db conn) [:db/id] 74766790688889)
+;; => [{:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub 74766790688888}]
+
+;; => [{:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub 74766790688888}]
+
+;; => [{:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub "NOTHING"}
+;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub 74766790688888}
+;;     {:id 74766790688889, :key :node/name, :attr 76, :val "Chorizo Wrap", :sub 74766790688888}]
+
 ;; => [{:id 74766790688889, :key :node/yield, :attr 78, :val 1.0, :sub 74766790688888}
 ;;     {:id 74766790688889, :key :node/uom, :attr 81, :val 83562883711081, :sub 74766790688888}
 ;;     {:id 74766790688889, :key :node/children, :attr 79, :val 74766790688896, :sub 74766790688888}
