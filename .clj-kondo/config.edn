@@ -2,4 +2,5 @@
    :lint-as {mount.core/defstate clojure.core/def}
    :hooks {:analyze-call {mount.core/defstate hooks.defstate/defstate}}}
 
-{:lint-as {mount.core/defstate clojure.core/def}}
+{:lint-as {mount.core/defstate clojure.core/def
+           neo4j-clj.core/defquery clojure.core/def}}

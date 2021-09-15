@@ -1,0 +1,23 @@
+version: "3.1"
+services:
+  neo4j:
+    image: neo4j/neo4j-arm64-experimental:4.2.5-arm64
+    restart: always
+    hostname: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4j/data/conf:/conf
+      - ./neo4j/data/data:/data
+      - ./neo4j/data/import:/import
+      - ./neo4j/data/logs:/logs
+      - ./neo4j/data/plugins:/plugins
+    environment:
+      - NEO4J_AUTH=neo4j/secret
+      - NEO4JLABS_PLUGINS=["apoc", "graph-data-science"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*,gds.*
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
+      - SECURE_FILE_PERMISSIONS=yes
+      - NEO4J_dbms_logs_debug_level=DEBUG

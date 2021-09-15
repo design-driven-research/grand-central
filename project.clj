@@ -9,6 +9,7 @@
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.5"]
                  [clojure.java-time "0.3.3"]
+                 [gorillalabs/neo4j-clj "4.1.2"]
                  #_[com.datomic/datomic-free "0.9.5697" :exclusions [org.slf4j/log4j-over-slf4j org.slf4j/slf4j-nop com.google.guava/guava]]
                  [com.datomic/dev-local "0.9.235"]
                  [com.google.guava/guava "25.1-jre"]

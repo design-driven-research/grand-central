@@ -1,6 +1,7 @@
 (ns rdd.grand-central.db.core
   (:require
    [datomic.client.api :as d]
+   [rdd.grand-central.db.neo4j :as neo]
    #_[io.rkn.conformity :as c]
    [mount.core :refer [defstate]]
    [rdd.grand-central.config :refer [env]]))
@@ -86,58 +87,54 @@
 
 (defn load-initial!
   []
-  {}
-  #_(d/q '[:find ?e
-           :where [?e]]
-         (d/db conn)))
+  (neo/item->tree neo/session {:name "Chorizo Family Pack"}))
+#_(defn node->tree
+    [e]
+    (let [has-child-nodes? (:node/children e)
+          has-child-node? (:edge/child e)
 
-(defn node->tree
-  [e]
-  (let [has-child-nodes? (:node/children e)
-        has-child-node? (:edge/child e)
+          build-node-with-children (fn [node]
+                                     (let [children (mapv node->tree (:node/children node))
+                                           id (-> node :db/id)
+                                           name (-> node :node/name)
+                                           yield (-> node :node/yield)
+                                           total-children-cost (->> children
+                                                                    (map :total-cost)
+                                                                    (reduce +))
+                                           normalized-cost (/ total-children-cost yield)]
+                                       {:id id
+                                        :name name
+                                        :yield yield
+                                        :normalized-cost normalized-cost
+                                        :children children}))
 
-        build-node-with-children (fn [node]
-                                   (let [children (mapv node->tree (:node/children node))
-                                         id (-> node :db/id)
-                                         name (-> node :node/name)
-                                         yield (-> node :node/yield)
-                                         total-children-cost (->> children
-                                                                  (map :total-cost)
-                                                                  (reduce +))
-                                         normalized-cost (/ total-children-cost yield)]
-                                     {:id id
-                                      :name name
-                                      :yield yield
-                                      :normalized-cost normalized-cost
-                                      :children children}))
+          build-edge (fn [edge]
+                       (let [node (node->tree (:edge/child edge))
+                             edge-id (:db/id edge)
+                             quantity (:edge/quantity edge)
+                             uom (-> edge :edge/uom :uom/code)
+                             total-cost (* quantity (-> node :normalized-cost))]
+                         (merge node {:quantity quantity
+                                      :edge-id edge-id
+                                      :total-cost total-cost
+                                      :uom uom})))
 
-        build-edge (fn [edge]
-                     (let [node (node->tree (:edge/child edge))
-                           edge-id (:db/id edge)
-                           quantity (:edge/quantity edge)
-                           uom (-> edge :edge/uom :uom/code)
-                           total-cost (* quantity (-> node :normalized-cost))]
-                       (merge node {:quantity quantity
-                                    :edge-id edge-id
-                                    :total-cost total-cost
-                                    :uom uom})))
+          build-base-node (fn [node]
+                            (let [id (-> node :db/id)
+                                  name (-> node :node/name)
+                                  yield (-> node :node/yield)
+                                  uom (-> node :node/uom :uom/code)
+                                  cost-per-yield 1
+                                  normalized-cost (/ cost-per-yield yield)]
+                              {:id id
+                               :uom uom
+                               :normalized-cost normalized-cost
+                               :name name}))]
 
-        build-base-node (fn [node]
-                          (let [id (-> node :db/id)
-                                name (-> node :node/name)
-                                yield (-> node :node/yield)
-                                uom (-> node :node/uom :uom/code)
-                                cost-per-yield 1
-                                normalized-cost (/ cost-per-yield yield)]
-                            {:id id
-                             :uom uom
-                             :normalized-cost normalized-cost
-                             :name name}))]
-
-    (cond
-      has-child-nodes? (build-node-with-children e)
-      has-child-node? (build-edge e)
-      :else (build-base-node e))))
+      (cond
+        has-child-nodes? (build-node-with-children e)
+        has-child-node? (build-edge e)
+        :else (build-base-node e))))
 
 #_(time (-> (d/entity (d/db conn) [:node/name "Chorizo Wrap"])
             node->tree))
@@ -146,37 +143,3 @@
          :keys id
          :where [?e :person/name "Bob"]]
        (d/db conn))
-
-;; => [[{:db/id 17592186045442,
-;;       :node/name "Oil mix",
-;;       :node/yield 50.0,
-;;       :node/children
-;;       [{:db/id 17592186045446,
-;;         :edge/parent #:db{:id 17592186045442},
-;;         :edge/child #:db{:id 17592186045438},
-;;         :edge/uom #:db{:id 17592186045428},
-;;         :edge/quantity 10.0}
-;;        {:db/id 17592186045447,
-;;         :edge/parent #:db{:id 17592186045442},
-;;         :edge/child #:db{:id 17592186045439},
-;;         :edge/uom #:db{:id 17592186045428},
-;;         :edge/quantity 10.0}
-;;        {:db/id 17592186045448,
-;;         :edge/parent #:db{:id 17592186045442},
-;;         :edge/child #:db{:id 17592186045440},
-;;         :edge/uom #:db{:id 17592186045428},
-;;         :edge/quantity 10.0}
-;;        {:db/id 17592186045449,
-;;         :edge/parent #:db{:id 17592186045442},
-;;         :edge/child #:db{:id 17592186045441},
-;;         :edge/uom #:db{:id 17592186045428},
-;;         :edge/quantity 10.0}],
-;;       :node/parents
-;;       [{:db/id 17592186045450,
-;;         :edge/parent #:db{:id 17592186045443},
-;;         :edge/child #:db{:id 17592186045442},
-;;         :edge/uom #:db{:id 17592186045428},
-;;         :edge/quantity 10.0}],
-;;       :node/uom #:db{:id 17592186045428}}]]
-
-
