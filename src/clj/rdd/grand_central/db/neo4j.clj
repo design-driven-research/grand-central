@@ -19,8 +19,6 @@
    CREATE CONSTRAINT unique_uom_name ON (uom:UOM) ASSERT uom.name IS UNIQUE;
    ")
 
-
-
 (defquery create-company
   "MERGE (c:Company {name: $name})")
 
@@ -41,8 +39,6 @@
    RETURN value;
    ")
 
-
-
 (defquery item->tree
   "MATCH (i:Item {name: $name})
    CALL apoc.path.expandConfig(i, {
@@ -52,7 +48,6 @@
    CALL apoc.convert.toTree(paths)
    YIELD value
    RETURN value;")
-
 
 (defquery clear-db "MATCH (n) DETACH DELETE n")
 

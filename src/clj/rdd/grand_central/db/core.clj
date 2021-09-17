@@ -85,9 +85,11 @@
 #_(defn find-user [db id]
     (d/touch (find-one-by db :user/id id)))
 
-(defn load-initial!
-  []
-  (neo/item->tree neo/session {:name "Chorizo Family Pack"}))
+(defn item->tree
+  [product-name]
+  (-> (neo/item->tree neo/session {:name product-name})
+      first
+      :value))
 #_(defn node->tree
     [e]
     (let [has-child-nodes? (:node/children e)

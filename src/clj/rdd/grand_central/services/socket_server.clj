@@ -47,10 +47,11 @@
   [{:as ev-msg :keys [?reply-fn]}])
 
 (defmethod -event-msg-handler
-  :data/load-initial!
-  [{:as ev-msg :keys [?reply-fn]}]
+  :data/item-by-name
+  [{:as ev-msg :keys [?reply-fn ?data]}]
   (when ?reply-fn
-    (?reply-fn (db/load-initial!))))
+    (let [tree (db/item->tree (:product-name ?data))]
+      (?reply-fn tree))))
 
 (defstate socket-server
   :start (let [conn (:ch-chsk socket-connection)

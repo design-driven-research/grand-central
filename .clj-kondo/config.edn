@@ -1,6 +1,7 @@
-#_{:linters {:mount/defstate {:level :warning}}
-   :lint-as {mount.core/defstate clojure.core/def}
-   :hooks {:analyze-call {mount.core/defstate hooks.defstate/defstate}}}
+{:linters
+ {:clj-kondo.hooks.defquery/argument-type {:level :error}}
 
-{:lint-as {mount.core/defstate clojure.core/def
-           neo4j-clj.core/defquery clojure.core/def}}
+ :hooks
+ {:analyze-call {neo4j-clj.core/defquery hooks.defquery/defquery}}
+
+ :lint-as {mount.core/defstate clojure.core/def}}
