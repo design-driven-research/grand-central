@@ -1,0 +1,138 @@
+{;;  Companies
+ :companies [{:name "Nut Site"}
+             {:name "ABC Organics"}]
+
+ ;;  What systems of measurement are allowed in the system?
+ :measurment-system
+
+ [{:name "Imperial"}
+  {:name "Metric"}
+  {:name "Custom"}]
+
+
+;;  The standard units of measure
+ :uoms
+
+ [{:name "Pound" :code "lb" :type "WEIGHT" :system "Imperial"}
+  {:name "Gram" :code "gr" :type "WEIGHT" :system "Metric"}
+  {:name "Kilogram" :code "kg" :type "WEIGHT" :system "Metric"}
+  {:name "Each" :code "ea" :type "COUNT" :system "Custom"}]
+
+
+;;  Seed items, both ingredient and recipe
+ :items
+
+ [{:name "Salt" :yield 1.0 :uom "gr"}
+  {:name "Garlic Powder" :yield 1.0 :uom "gr"}
+  {:name "Onion Powder" :yield 1.0 :uom "gr"}
+  {:name "Bay Leaves" :yield 1.0 :uom "gr"}
+  {:name "Asafoetida" :yield 1.0 :uom "gr"}
+  {:name "Pearl Dust" :yield 1.0 :uom "gr"}
+
+  {:name "Pepper" :yield 1.0 :uom "gr"}
+  {:name "Turmeric" :yield 1.0 :uom "gr"}
+
+  {:name "Special Sauce"
+   :yield 130.0
+   :uom "gr"
+   :items [{:name "Salt"
+            :quantity 10.0
+            :uom "gr"}
+
+           {:name "Garlic Powder"
+            :quantity 20.0
+            :uom "gr"}
+
+           {:name "Onion Powder"
+            :quantity 20.0
+            :uom "gr"}
+
+           {:name "Asafoetida"
+            :quantity 30.0
+            :uom "gr"}
+
+           {:name "Pearl Dust"
+            :quantity 50.0
+            :uom "gr"}]}
+
+  {:name "Spicy Sauce"
+   :yield 30.0
+   :uom "gr"
+   :items [{:name "Pepper"
+            :quantity 10.0
+            :uom "gr"}
+
+           {:name "Turmeric"
+            :quantity 10.0
+            :uom "gr"}
+
+           {:name "Asafoetida"
+            :quantity 10.0
+            :uom "gr"}]}
+
+  {:name "Master Sauce"
+   :yield 40.0
+   :uom "gr"
+   :items [{:name "Special Sauce"
+            :quantity 20.0
+            :uom "gr"}
+
+           {:name "Spicy Sauce"
+            :quantity 20.0
+            :uom "gr"}]}
+
+
+  {:name "Chorizo Wrap"
+   :yield 1
+   :uom "ea"
+   :items [{:name "Master Sauce"
+            :quantity 50
+            :uom "gr"}
+
+           {:name "Salt"
+            :quantity 10
+            :uom "gr"}
+
+           {:name "Pepper"
+            :quantity 10
+            :uom "gr"}]}
+
+  {:name "Chorizo Family Pack"
+   :yield 1
+   :uom "ea"
+   :items [{:name "Chorizo Wrap"
+            :quantity 9
+            :uom "ea"}]}]
+
+
+;;  The conversions between units of measure
+ :conversions
+
+ [{:from "lb"
+   :to "gr"
+   :quantity 453.1}
+
+  {:from "kg"
+   :to "gr"
+   :quantity 1000.0}
+
+  {:from "gr"
+   :to "gr"
+   :quantity 1.0}]
+
+
+;;  Prices
+ :prices
+
+ [{:item "Turmeric"
+   :company "ABC Organics"
+   :sku "P002"
+   :price 25.00
+   :uom "lb"
+   :quantity 5.0}
+  {:item "Pepper"
+   :company "Nut Site"
+   :sku "P001"
+   :price 25.00
+   :uom "lb"
+   :quantity 5.0}]}

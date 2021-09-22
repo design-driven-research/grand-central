@@ -2,7 +2,7 @@
   (:require [mount.core :refer [defstate]]
             [ring.util.response]
             [taoensso.sente :as sente]
-            [rdd.grand-central.db.core :as db]
+            [rdd.grand-central.db.neo4j :as db]
             [taoensso.sente.server-adapters.aleph :refer [get-sch-adapter]]))
 
 (defstate socket-connection
@@ -52,6 +52,18 @@
   (when ?reply-fn
     (let [tree (db/item->tree (:product-name ?data))]
       (?reply-fn tree))))
+
+(defmethod -event-msg-handler
+  :update/recipe-line-item-quantity
+  [{:as ev-msg :keys [?reply-fn ?data]}]
+  (tap> ?data)
+  (let [result (db/update-recipe-line-item-quantity-query
+                db/session
+                ?data)]
+    (when ?reply-fn
+      (?reply-fn result))))
+
+
 
 (defstate socket-server
   :start (let [conn (:ch-chsk socket-connection)

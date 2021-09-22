@@ -113,7 +113,7 @@
                                          :quantity 50
                                          :uom "ea"}))
 
-  (db/item->tree db/session {:name "Chorizo Family Pack"})
+  (db/item->tree "Chorizo Family Pack")
   ;; => ({:value
   ;;      {:measured_in ({:_type "UOM", :name "Each", :_id 16, :code "ea", :type "COUNT"}),
   ;;       :yield 1.0,
