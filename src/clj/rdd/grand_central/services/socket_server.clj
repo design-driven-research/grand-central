@@ -63,8 +63,6 @@
     (when ?reply-fn
       (?reply-fn result))))
 
-
-
 (defstate socket-server
   :start (let [conn (:ch-chsk socket-connection)
                stop-fn (sente/start-server-chsk-router! conn event-msg-handler)]
