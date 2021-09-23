@@ -17,6 +17,12 @@
       "ns": "user",
       "repl": "clj",
       "snippet": "(restart)"
+    },
+    {
+      "name": "Reset DB",
+      "ns": "user",
+      "repl": "clj",
+      "snippet": "(reset-db!)"
     }
   ],
   "calva.replConnectSequences": [

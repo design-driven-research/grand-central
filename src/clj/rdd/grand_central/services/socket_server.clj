@@ -1,8 +1,8 @@
 (ns rdd.grand-central.services.socket-server
   (:require [mount.core :refer [defstate]]
             [ring.util.response]
+            [rdd.grand-central.db.core :as db]
             [taoensso.sente :as sente]
-            [rdd.grand-central.db.neo4j :as db]
             [taoensso.sente.server-adapters.aleph :refer [get-sch-adapter]]))
 
 (defstate socket-connection
@@ -10,8 +10,7 @@
                        ajax-post-fn ajax-get-or-ws-handshake-fn]}
                (sente/make-channel-socket! (get-sch-adapter) {:csrf-token-fn nil ;; Add temporarily during dev
                                                               })]
-           {:ch-chsk                       ch-recv
-            :chsk-send!                    send-fn
+           {:ch-chsk                    send-fn
             :connected-uids                connected-uids
             :routes ["/chsk"
                      {:get {:summary "Receive on websocket"
@@ -26,7 +25,7 @@
 (defn event-msg-handler
   "Wraps `-event-msg-handler` with logging, error catching, etc."
   [{:as ev-msg :keys [id ?data event]}]
-  (prn (str "Called - " id))
+  (tap> (str "Calling event msg handler " id))
   (-event-msg-handler ev-msg))
 
 (defmethod -event-msg-handler
@@ -49,6 +48,7 @@
 (defmethod -event-msg-handler
   :data/item-by-name
   [{:as ev-msg :keys [?reply-fn ?data]}]
+  (tap> ev-msg)
   (when ?reply-fn
     (let [tree (db/item->tree (:product-name ?data))]
       (?reply-fn tree))))
@@ -57,9 +57,9 @@
   :update/recipe-line-item-quantity
   [{:as ev-msg :keys [?reply-fn ?data]}]
   (tap> ?data)
-  (let [result (db/update-recipe-line-item-quantity-query
-                db/session
-                ?data)]
+  (let [result {} #_(db/update-recipe-line-item-quantity-query
+                     db/session
+                     ?data)]
     (when ?reply-fn
       (?reply-fn result))))
 

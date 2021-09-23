@@ -10,8 +10,10 @@
   :dependencies [[ch.qos.logback/logback-classic "1.2.5"]
                  [clojure.java-time "0.3.3"]
                  [gorillalabs/neo4j-clj "4.1.2"]
+                 [com.datomic/dev-local "0.9.235"]
                  [com.google.guava/guava "25.1-jre"]
                  [nano-id "1.0.0"]
+
                  [cprop "0.1.19"]
                  [expound "0.8.9"]
                  [funcool/cuerdas "2021.05.29-0"]
@@ -51,7 +53,7 @@
   :plugins []
 
   :profiles
-  {:reveal {:dependencies [[vlaaad/reveal "1.3.194"]]
+  {:reveal {:dependencies [[vlaaad/reveal "1.3.217"]]
             :repl-options {:nrepl-middleware [vlaaad.reveal.nrepl/middleware]}}
    :uberjar {:omit-source true
              :aot :all

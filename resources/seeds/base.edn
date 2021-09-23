@@ -13,10 +13,10 @@
 ;;  The standard units of measure
  :uoms
 
- [{:name "Pound" :code "lb" :type "WEIGHT" :system "Imperial"}
-  {:name "Gram" :code "gr" :type "WEIGHT" :system "Metric"}
-  {:name "Kilogram" :code "kg" :type "WEIGHT" :system "Metric"}
-  {:name "Each" :code "ea" :type "COUNT" :system "Custom"}]
+ [{:name "Pound" :code "lb" :type :units.type/WEIGHT :system :units.system/IMPERIAL}
+  {:name "Gram" :code "gr" :type :units.type/WEIGHT :system :units.system/METRIC}
+  {:name "Kilogram" :code "kg" :type :units.type/WEIGHT :system :units.system/METRIC}
+  {:name "Each" :code "ea" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
 
 
 ;;  Seed items, both ingredient and recipe
@@ -83,25 +83,25 @@
 
 
   {:name "Chorizo Wrap"
-   :yield 1
+   :yield 1.0
    :uom "ea"
    :items [{:name "Master Sauce"
-            :quantity 50
+            :quantity 50.0
             :uom "gr"}
 
            {:name "Salt"
-            :quantity 10
+            :quantity 10.0
             :uom "gr"}
 
            {:name "Pepper"
-            :quantity 10
+            :quantity 10.0
             :uom "gr"}]}
 
   {:name "Chorizo Family Pack"
-   :yield 1
+   :yield 1.0
    :uom "ea"
    :items [{:name "Chorizo Wrap"
-            :quantity 9
+            :quantity 12.0
             :uom "ea"}]}]
 
 

@@ -1,75 +1,32 @@
 {:schema [{:db/ident :units.system/IMPERIAL}
           {:db/ident :units.system/METRIC}
+          {:db/ident :units.system/CUSTOM}
 
           {:db/ident :units.type/WEIGHT}
           {:db/ident :units.type/VOLUME}
           {:db/ident :units.type/CUSTOM}
 
-          {:db/doc "Node name"
-           :db/ident :node/name
+        ;;   Items
+          {:db/ident :item/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
-          {:db/doc "Node description"
-           :db/ident :node/description
-           :db/valueType :db.type/string
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :node/yield
-           :db/valueType :db.type/double
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :node/children
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/many
-           :db/isComponent true}
-
-          {:db/ident :node/parents
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/many
-           :db/isComponent true}
-
-          {:db/ident :node/uom
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :node/categories
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/many}
-
-          {:db/ident :node/tags
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/many}
-
-          {:db/ident :category/name
+          {:db/ident :item/name
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :category/parents
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/many}
-
-          {:db/ident :tag/name
+        ;;   Recipe Line Items
+          {:db/ident :recipe-line-item/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :edge/parent
-           :db/cardinality :db.cardinality/one
-           :db/valueType :db.type/ref}
-
-          {:db/ident :edge/child
-           :db/cardinality :db.cardinality/one
-           :db/valueType :db.type/ref}
-
-          {:db/ident :edge/uom
-           :db/cardinality :db.cardinality/one
-           :db/valueType :db.type/ref}
-
-          {:db/ident :edge/quantity
-           :db/valueType :db.type/double
+        ;;   UOMs
+          {:db/ident :uom/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
           {:db/ident :uom/name
@@ -90,12 +47,10 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :uom/factor
-           :db/valueType :db.type/double
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :conversion/node
-           :db/valueType :db.type/ref
+          ;;   Conversions
+          {:db/ident :conversion/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
           {:db/ident :conversion/from
@@ -106,22 +61,38 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :conversion/factor
+        ;;   Costs
+          {:db/ident :cost/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+
+        ;;   Generic values
+        ;;   Measurement
+          {:db/ident :measurement/quantity
            :db/valueType :db.type/double
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :cost/uom
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :cost/node
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :cost/cost
+          {:db/ident :measurement/yield
            :db/valueType :db.type/double
            :db/cardinality :db.cardinality/one}
 
-          {:db/ident :cost/quantity
+          {:db/ident :measurement/uom
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+        ;;   References
+          {:db/ident :for/item
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+        ;;   Composite
+          {:db/ident :composite/contains
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many}
+
+        ;;   Currency
+          {:db/ident :currency.usd/cost
            :db/valueType :db.type/double
            :db/cardinality :db.cardinality/one}]}
