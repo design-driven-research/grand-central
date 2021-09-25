@@ -2,12 +2,15 @@
   (:require [rdd.grand-central.middleware.formats :as formats]
             [reitit.coercion.spec :as spec-coercion]
             [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.exception :as exception]
+            [rdd.grand-central.db.core :as db]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.parameters :as parameters]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
             [ring.middleware.anti-forgery :as af]
+
             [ring.util.http-response :refer :all]))
 
 (defn service-routes []
@@ -30,7 +33,10 @@
                  ;; coercing request parameters
                  coercion/coerce-request-middleware
                  ;; multipart
-                 multipart/multipart-middleware]}
+                 multipart/multipart-middleware
+
+                ;;  
+                 exception/exception-middleware]}
 
    ;; swagger documentation
    ["" {:no-doc true
@@ -45,6 +51,22 @@
             {:url "/api/swagger.json"
              :config {:validator-url nil}})}]]
 
+   ["/items"
+    ["/:item-name"
+     {:parameters {:path {:item-name string?}}
+      :get {:handler (fn [request]
+                       (let [item-name (-> request :parameters :path :item-name)]
+                         {:status 200
+                          :body {:item (db/item->tree item-name)}}))}}]]
+
+  ;;  
+   ["/test/:val"
+    {:parameters {:path {:val int?}}
+     :get {:handler (fn [request]
+                      (tap> (-> request :parameters :path :val))
+                      {:status 200
+                       :body {:item {}}})}}]
+
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
 
@@ -53,4 +75,3 @@
            :handler (fn [request]
                       {:status 200
                        :body {:token af/*anti-forgery-token*}})}}]])
-
