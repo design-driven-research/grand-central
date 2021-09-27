@@ -3,6 +3,7 @@
             [reitit.coercion.spec :as spec-coercion]
             [reitit.ring.coercion :as coercion]
             [reitit.ring.middleware.exception :as exception]
+            [postmortem.core :as pm]
             [rdd.grand-central.db.core :as db]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.muuntaja :as muuntaja]
@@ -52,6 +53,17 @@
              :config {:validator-url nil}})}]]
 
    ["/items"
+    ["/"
+     {:post {:summary "Update the quantity"
+             :parameters {:body {:uuid string?
+                                 :quantity float?}}
+             :responses {200 {:body {:result map?}}
+                         400 {:body {:error string?}}}
+             :handler (fn [{:keys [body-params]}]
+                      ;;  (tap> body-params)
+                        (pm/spy>> :req body-params)
+                        {:status 200
+                         :body {:result {:msg "Success"}}})}}]
     ["/:item-name"
      {:parameters {:path {:item-name string?}}
       :get {:handler (fn [request]
@@ -75,3 +87,14 @@
            :handler (fn [request]
                       {:status 200
                        :body {:token af/*anti-forgery-token*}})}}]])
+
+(comment
+  (-> (pm/log-for :req)
+      (first)
+      :body
+      (slurp))
+  (pm/log-for :req)
+
+  (pm/reset!)
+  ;; 
+  )
