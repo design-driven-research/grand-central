@@ -8,10 +8,10 @@
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.parameters :as parameters]
+            [rdd.grand-central.services.store :as store]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
             [ring.middleware.anti-forgery :as af]
-
             [ring.util.http-response :refer :all]))
 
 (defn service-routes []
@@ -35,8 +35,7 @@
                  coercion/coerce-request-middleware
                  ;; multipart
                  multipart/multipart-middleware
-
-                ;;  
+                 ;; exceptions (not sure if needed)
                  exception/exception-middleware]}
 
    ;; swagger documentation
@@ -52,32 +51,35 @@
             {:url "/api/swagger.json"
              :config {:validator-url nil}})}]]
 
+   ["/composites"
+    ["/recipe-line-items"
+     {:post {:summary "Update recipe line item"
+             :parameters {:body {:uuid string?}}
+             :responses {200 {:body {:result map?}}
+                         400 {:body {:error string?}}}
+             :handler (fn [{:keys [body-params]}]
+                        (store/update-recipe-line-item body-params)
+                        {:status 200
+                         :body {:result {:msg "Success"}}})}}]]
    ["/items"
     ["/"
      {:post {:summary "Update the quantity"
              :parameters {:body {:uuid string?
-                                 :quantity float?}}
+                                 :quantity number?}}
              :responses {200 {:body {:result map?}}
                          400 {:body {:error string?}}}
              :handler (fn [{:keys [body-params]}]
-                      ;;  (tap> body-params)
-                        (pm/spy>> :req body-params)
-                        {:status 200
-                         :body {:result {:msg "Success"}}})}}]
+                        (let [{:keys [uuid quantity]} body-params]
+                          (store/update-recipe-line-item-quantity uuid quantity)
+                          {:status 200
+                           :body {:result {:msg "Success"}}}))}}]
+
     ["/:item-name"
-     {:parameters {:path {:item-name string?}}
-      :get {:handler (fn [request]
+     {:get {:parameters {:path {:item-name string?}}
+            :handler (fn [request]
                        (let [item-name (-> request :parameters :path :item-name)]
                          {:status 200
                           :body {:item (db/item->tree item-name)}}))}}]]
-
-  ;;  
-   ["/test/:val"
-    {:parameters {:path {:val int?}}
-     :get {:handler (fn [request]
-                      (tap> (-> request :parameters :path :val))
-                      {:status 200
-                       :body {:item {}}})}}]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
@@ -96,5 +98,7 @@
   (pm/log-for :req)
 
   (pm/reset!)
+
+
   ;; 
   )

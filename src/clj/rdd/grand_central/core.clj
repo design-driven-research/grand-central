@@ -4,6 +4,7 @@
    [rdd.grand-central.nrepl :as nrepl]
    [luminus.http-server :as http]
    [rdd.grand-central.db.core]
+   [rdd.grand-central.services.store]
    [rdd.grand-central.config :refer [env]]
    [clojure.tools.cli :refer [parse-opts]]
    [clojure.tools.logging :as log]

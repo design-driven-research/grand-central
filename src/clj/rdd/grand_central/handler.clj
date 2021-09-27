@@ -13,8 +13,6 @@
   :start ((or (:init defaults) (fn [])))
   :stop  ((or (:stop defaults) (fn []))))
 
-
-
 (mount/defstate app-routes
   :start (ring/ring-handler
           (ring/router
