@@ -18,6 +18,7 @@
                  [funcool/cuerdas "2021.05.29-0"]
                  [funcool/struct "1.4.0"]
                  [json-html "0.4.7"]
+                 [tick "0.5.0-RC2"]
                  #_[luminus-aleph "0.1.6"]
                  [luminus-transit "0.1.2"]
                  [luminus/ring-ttl-session "0.3.3"]

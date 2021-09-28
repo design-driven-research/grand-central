@@ -1,6 +1,8 @@
 {;;  Companies
- :companies [{:name "Nut Site"}
-             {:name "ABC Organics"}]
+ :companies
+
+ [{:name "Nut Site"}
+  {:name "ABC Organics"}]
 
 ;;  The standard units of measure
  :uoms
@@ -8,7 +10,25 @@
  [{:name "Pound" :code "lb" :type :units.type/WEIGHT :system :units.system/IMPERIAL}
   {:name "Gram" :code "gr" :type :units.type/WEIGHT :system :units.system/METRIC}
   {:name "Kilogram" :code "kg" :type :units.type/WEIGHT :system :units.system/METRIC}
-  {:name "Each" :code "ea" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
+
+  {:name "Each" :code "ea" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Pallet" :code "pallet" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Case" :code "case" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
+
+ ;;  The conversions between units of measure
+ :conversions
+
+ [{:from "lb"
+   :to "gr"
+   :quantity 453.1}
+
+  {:from "kg"
+   :to "gr"
+   :quantity 1000.0}
+
+  {:from "gr"
+   :to "gr"
+   :quantity 1.0}]
 
 
 ;;  Seed items, both ingredient and recipe
@@ -96,78 +116,151 @@
             :quantity 12.0
             :uom "ea"}]}]
 
-
-;;  The conversions between units of measure
- :conversions
-
- [{:from "lb"
-   :to "gr"
-   :quantity 453.1}
-
-  {:from "kg"
-   :to "gr"
-   :quantity 1000.0}
-
-  {:from "gr"
-   :to "gr"
-   :quantity 1.0}]
-
-
 ;;  Prices
- :costs
+ :company-items
 
  [{:item "Salt"
+   :name "Sea Salt, Fine"
+   :description "Sea salt, description"
    :company "ABC Organics"
    :sku "SAL-001"
-   :cost 1.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]}
+
+  {:item "Salt"
+   :name "Sea Salt, coarse"
+   :description "Sea salt, description"
+   :company "ABC Organics"
+   :sku "SAL-002"
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2024-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Garlic Powder"
+   :name "Garlic powder, fine"
+   :description "Garlic powder description"
    :company "ABC Organics"
    :sku "GRL-PWD-001"
-   :cost 10.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 5.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Onion Powder"
+   :name "Onion powder, fine"
+   :description "Onion powder description"
    :company "ABC Organics"
    :sku "ON-PWD-001"
-   :cost 10.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 5.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Bay Leaves"
+   :name "Bay leaves whole"
+   :description "Bay leaves description"
    :company "ABC Organics"
    :sku "BAY-001"
-   :cost 5.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 5.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Asafoetida"
+   :name "Asafoetida resin"
+   :description "Asafoetida description"
    :company "ABC Organics"
    :sku "ASS-PWD-001"
-   :cost 10.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 5.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Pearl Dust"
+   :name "Pearl dust, fine"
+   :description "Pearl dust description"
    :company "ABC Organics"
    :sku "PD-PWD-001"
-   :cost 10.0
-   :uom "lb"
-   :quantity 1.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 2.0
+             :uom "lb"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 5.0
+             :uom "lb"
+             :quantity 1.0}]}
 
   {:item "Turmeric"
+   :name "Turmeric powder, fine"
+   :description "Turmeric powder description"
    :company "ABC Organics"
    :sku "P002"
-   :cost 25.00
-   :uom "lb"
-   :quantity 5.0}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 1000.0
+             :uom "pallet"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "case"
+                  :to "lb"
+                  :quantity 25.0}
+                 {:from "pallet"
+                  :to "case"
+                  :quantity 50.0}]}
 
   {:item "Pepper"
+   :name "Pepper, whole, malabaar"
+   :description "Pepper description"
    :company "Nut Site"
    :sku "P001"
-   :cost 25.00
-   :uom "lb"
-   :quantity 5.0}]}
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2021-01-21"
+             :cost 1000.0
+             :uom "pallet"
+             :quantity 1.0}
+            {:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "case"
+                  :to "lb"
+                  :quantity 25.0}
+                 {:from "pallet"
+                  :to "case"
+                  :quantity 50.0}]}]}

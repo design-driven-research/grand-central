@@ -4,6 +4,8 @@
    [clojure.edn :as edn]
    [datomic.client.api :as d]
    [nano-id.core :refer [nano-id]]
+   [tick.core :as t]
+   [tick.locale-en-us]
    [postmortem.core :as pm]
    [rdd.grand-central.config :refer [env]]))
 
@@ -27,6 +29,11 @@
   (-> (slurp path)
       read-string
       :schema))
+
+(defn load-seed-data
+  [path]
+  (-> (slurp path)
+      edn/read-string))
 
 (defn install-schema
   [conn path]
@@ -87,16 +94,64 @@
      :conversion/to [:uom/code to]
      :measurement/quantity quantity}))
 
-(defn create-cost-seed-data
+(defn date-str-to->inst
+  [date]
+  (t/inst (-> (t/date date)
+              (t/at (t/midnight))
+              (t/in "America/Los_Angeles"))))
+
+(defn create-company-items-data
   [data]
-  (for [{:keys [item cost company sku uom quantity]} (:costs data)]
-    {:cost/uuid (nano-id)
-     :currency.usd/cost cost
-     :cost/sku sku
-     :cost/company [:company/name company]
-     :cost/item [:item/name item]
-     :measurement/uom [:uom/code uom]
-     :measurement/quantity quantity}))
+  (let [payload (for [{:keys [item
+                              company
+                              sku
+                              name
+                              description
+                              quotes
+                              conversions]} (:company-items data)]
+
+
+                  (let [company-item-temp-id (rand-int -10000000)
+                        conversion-payloads (for [{:keys [from to quantity]} conversions]
+                                              (let [conversion-temp-id (rand-int -10000000)]
+                                                {:db/id conversion-temp-id
+                                                 :conversion/uuid (nano-id)
+                                                 :conversion/from [:uom/code from]
+                                                 :conversion/to [:uom/code to]
+                                                 :measurement/quantity quantity}))
+                        conversion-ids (map :db/id conversion-payloads)
+
+                        quote-payloads (for [{:keys [uom quantity cost valid-from valid-to]} quotes]
+                                         (let [quote-temp-id (rand-int -10000000)
+                                               valid-from (date-str-to->inst valid-from)
+                                               valid-to (date-str-to->inst valid-to)]
+                                           {:db/id quote-temp-id
+                                            :quote/uuid (nano-id)
+                                            :date/valid-from valid-from
+                                            :date/valid-to valid-to
+                                            :measurement/uom [:uom/code uom]
+                                            :measurement/quantity quantity
+                                            :currency.usd/cost cost}))
+                        quote-ids (map :db/id quote-payloads)
+                        company-item-payload {:db/id company-item-temp-id
+                                              :company-item/uuid (nano-id)
+                                              :company-item/sku sku
+                                              :company-item/name name
+                                              :info/description description
+                                              :company-item/item [:item/name item]
+                                              :company-item/quotes quote-ids
+                                              :uom/conversions conversion-ids}
+                        company-update-payload {:db/id [:company/name company]
+                                                :company/company-items company-item-temp-id}]
+
+                    [company-update-payload
+                     company-item-payload
+                     quote-payloads
+                     conversion-payloads]))]
+
+    (flatten payload)))
+
+(create-company-items-data (load-seed-data "resources/seeds/base.edn"))
 
 (defn create-recipes
   [data]
@@ -117,10 +172,6 @@
           [item-updates children]))
       flatten))
 
-(defn load-seed-data
-  [path]
-  (-> (slurp path)
-      edn/read-string))
 
 (defn- *reset-db!
   [db-name schema-path seed-path client]
@@ -135,8 +186,9 @@
     (d/transact conn {:tx-data (create-items seed-data)})
     (d/transact conn {:tx-data (create-recipes seed-data)})
     (d/transact conn {:tx-data (create-conversion-seed-data seed-data)})
-    (d/transact conn {:tx-data (create-cost-seed-data seed-data)})
+    (d/transact conn {:tx-data (create-company-items-data seed-data)})
     (reset! db-conn conn)))
+
 
 (defn reset-db!
   []
@@ -157,4 +209,4 @@
 
 #_(reset-db!)
 
-(item->tree "Chorizo Family Pack")
+#_(item->tree "Chorizo Family Pack")

@@ -17,6 +17,10 @@
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
+          {:db/ident :company/company-items
+           :db/isComponent true
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many}
 
           ;;   Items
           {:db/ident :item/uuid
@@ -29,10 +33,40 @@
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
+
+          ;; CompanyItems
+          {:db/ident :company-item/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :company-item/name
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :company-item/sku
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :company-item/item
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :company-item/quotes
+           :db/isComponent true
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many}
+
         ;;   Recipe Line Items
           {:db/ident :recipe-line-item/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :recipe-line-item/company-item
+           :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
         ;;   UOMs
@@ -59,6 +93,11 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
+          {:db/ident :uom/conversions
+           :db/isComponent true
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many}
+
           ;;   Conversions
           {:db/ident :conversion/uuid
            :db/unique :db.unique/identity
@@ -73,27 +112,19 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
-        ;;   Costs
-          {:db/ident :cost/uuid
+        ;;   Quotes
+          {:db/ident :quote/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :cost/company
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :cost/sku
-           :db/unique :db.unique/identity
-           :db/valueType :db.type/string
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :cost/item
-           :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
 
         ;;   Generic values
+        ;;   Information
+          {:db/ident :info/description
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
         ;;   Measurement
           {:db/ident :measurement/quantity
            :db/valueType :db.type/double
@@ -107,11 +138,6 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
-        ;;   References
-          {:db/ident :for/item
-           :db/valueType :db.type/ref
-           :db/cardinality :db.cardinality/one}
-
         ;;   Composite
           {:db/ident :composite/contains
            :db/valueType :db.type/ref
@@ -120,4 +146,17 @@
         ;;   Currency
           {:db/ident :currency.usd/cost
            :db/valueType :db.type/double
-           :db/cardinality :db.cardinality/one}]}
+           :db/cardinality :db.cardinality/one}
+
+          ;;   Dates
+          {:db/ident :date/valid-from
+           :db/valueType :db.type/instant
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :date/valid-to
+           :db/valueType :db.type/instant
+           :db/cardinality :db.cardinality/one}
+
+
+          ;; 
+          ]}
