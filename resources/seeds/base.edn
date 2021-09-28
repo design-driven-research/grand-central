@@ -2,14 +2,6 @@
  :companies [{:name "Nut Site"}
              {:name "ABC Organics"}]
 
- ;;  What systems of measurement are allowed in the system?
- :measurment-system
-
- [{:name "Imperial"}
-  {:name "Metric"}
-  {:name "Custom"}]
-
-
 ;;  The standard units of measure
  :uoms
 
@@ -122,17 +114,60 @@
 
 
 ;;  Prices
- :prices
+ :costs
 
- [{:item "Turmeric"
+ [{:item "Salt"
+   :company "ABC Organics"
+   :sku "SAL-001"
+   :cost 1.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Garlic Powder"
+   :company "ABC Organics"
+   :sku "GRL-PWD-001"
+   :cost 10.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Onion Powder"
+   :company "ABC Organics"
+   :sku "ON-PWD-001"
+   :cost 10.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Bay Leaves"
+   :company "ABC Organics"
+   :sku "BAY-001"
+   :cost 5.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Asafoetida"
+   :company "ABC Organics"
+   :sku "ASS-PWD-001"
+   :cost 10.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Pearl Dust"
+   :company "ABC Organics"
+   :sku "PD-PWD-001"
+   :cost 10.0
+   :uom "lb"
+   :quantity 1.0}
+
+  {:item "Turmeric"
    :company "ABC Organics"
    :sku "P002"
-   :price 25.00
+   :cost 25.00
    :uom "lb"
    :quantity 5.0}
+
   {:item "Pepper"
    :company "Nut Site"
    :sku "P001"
-   :price 25.00
+   :cost 25.00
    :uom "lb"
    :quantity 5.0}]}

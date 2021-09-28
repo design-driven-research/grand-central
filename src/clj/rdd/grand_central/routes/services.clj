@@ -51,6 +51,16 @@
             {:url "/api/swagger.json"
              :config {:validator-url nil}})}]]
 
+   ["/custom"
+    ["/initial-data"
+     {:get {:summary "Load initial data"
+
+            :responses {200 {:body {:result map?}}
+                        400 {:body {:error string?}}}
+            :handler (fn [request]
+                       {:status 200
+                        :body {:result {:data (store/initial-data)}}})}}]]
+
    ["/composites"
     ["/recipe-line-items"
      {:post {:summary "Update recipe line item"

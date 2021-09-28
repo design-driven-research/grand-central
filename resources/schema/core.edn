@@ -6,7 +6,19 @@
           {:db/ident :units.type/VOLUME}
           {:db/ident :units.type/CUSTOM}
 
-        ;;   Items
+          ;;   Companies
+          {:db/ident :company/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :company/name
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+
+          ;;   Items
           {:db/ident :item/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
@@ -65,6 +77,19 @@
           {:db/ident :cost/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :cost/company
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :cost/sku
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :cost/item
+           :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
 
