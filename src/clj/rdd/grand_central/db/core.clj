@@ -188,6 +188,7 @@
     (reset! db-conn conn)))
 
 
+
 (defn reset-db!
   []
   (*reset-db!
@@ -215,4 +216,11 @@
  "resources/schema/core.edn"
  "resources/seeds/simple.edn"
  client)
-(tap> (d/datoms))
+(tap> (d/datoms (d/db @db-conn) {:index :avet}))
+
+(d/delete-database client {:db-name "rdd"})
+
+(d/db client)
+
+
+(d/db @db-conn)
