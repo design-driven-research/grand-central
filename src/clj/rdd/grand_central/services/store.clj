@@ -28,7 +28,7 @@
 (defn get-items
   []
   (flatten (d/q '[:find (pull ?eid [*
-                                    {:measurement/uom [:uom/code]
+                                    {:measurement/uom [:uom/uuid]
                                      :composite/contains [:recipe-line-item/uuid]}])
                   :where
                   [?eid :item/uuid ?uuid]]
@@ -37,7 +37,7 @@
 (defn get-recipe-line-items
   []
   (flatten (d/q '[:find (pull ?eid [*
-                                    {:measurement/uom [:uom/code]
+                                    {:measurement/uom [:uom/uuid]
                                      :composite/contains [:item/uuid]}])
                   :where
                   [?eid :recipe-line-item/uuid ?uuid]]
@@ -59,21 +59,24 @@
 
 (defn get-conversions
   []
-  (flatten (d/q '[:find (pull ?eid [* {:conversion/from [:uom/code]} {:conversion/to [:uom/code]}])
+  (flatten (d/q '[:find (pull ?eid [* {:conversion/from [:uom/uuid]} {:conversion/to [:uom/uuid]}])
                   :where
                   [?eid :conversion/uuid ?uuid]]
                 (db))))
 
 (defn get-company-items
   []
-  (flatten (d/q '[:find (pull ?eid [* {:company-item/quotes [:quote/uuid]} {:uom/conversions [:conversion/uuid]}])
+  (flatten (d/q '[:find (pull ?eid [*
+                                    {:company-item/item [:item/uuid]}
+                                    {:company-item/quotes [:quote/uuid]}
+                                    {:uom/conversions [:conversion/uuid]}])
                   :where
                   [?eid :company-item/uuid ?uuid]]
                 (db))))
 
 (defn get-quotes
   []
-  (flatten (d/q '[:find (pull ?eid [* {:measurement/uom [:uom/code]}])
+  (flatten (d/q '[:find (pull ?eid [* {:measurement/uom [:uom/uuid]}])
                   :where
                   [?eid :quote/uuid ?uuid]]
                 (db))))
@@ -97,6 +100,8 @@
   (get-companies)
   (get-conversions)
   (get-quotes)
+
+  (initial-data)
 
   (tap> (initial-data))
 

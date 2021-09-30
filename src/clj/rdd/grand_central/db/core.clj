@@ -20,7 +20,7 @@
            (*reset-db!
             "rdd"
             "resources/schema/core.edn"
-            "resources/seeds/base.edn"
+            "resources/seeds/simple.edn"
             c)
            c))
 
@@ -151,8 +151,6 @@
 
     (flatten payload)))
 
-(create-company-items-data (load-seed-data "resources/seeds/base.edn"))
-
 (defn create-recipes
   [data]
   (-> (for [{:keys [name items]} (:items data)]
@@ -195,18 +193,26 @@
   (*reset-db!
    "rdd"
    "resources/schema/core.edn"
-   "resources/seeds/base.edn"
+   "resources/seeds/simple.edn"
    client))
 
-(defn item->tree
-  [name]
-  (d/pull (d/db @db-conn) '[* {:measurement/uom [:uom/code]
-                               :cost/_item [:cost/uuid
-                                            :measurement/quantity
-                                            {:cost/item [:item/uuid]}
-                                            {:measurement/uom [:uom/code]}]
-                               :composite/contains ...}] [:item/name name]))
+#_(defn item->tree
+    [name]
+    (d/pull (d/db @db-conn) '[* {:measurement/uom [:uom/code]
+                                 :cost/_item [:cost/uuid
+                                              :measurement/quantity
+                                              {:cost/item [:item/uuid]}
+                                              {:measurement/uom [:uom/code]}]
+                                 :composite/contains ...}] [:item/name name]))
 
 #_(reset-db!)
 
 #_(item->tree "Chorizo Family Pack")
+
+
+(*reset-db!
+ "rdd"
+ "resources/schema/core.edn"
+ "resources/seeds/simple.edn"
+ client)
+(tap> (d/datoms))

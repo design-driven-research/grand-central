@@ -1,0 +1,93 @@
+{;;  Companies
+ :companies
+
+ [{:name "Nut Site"}
+  {:name "ABC Organics"}]
+
+;;  The standard units of measure
+ :uoms
+
+ [{:name "Pound" :code "lb" :type :units.type/WEIGHT :system :units.system/IMPERIAL}
+  {:name "Gram" :code "gr" :type :units.type/WEIGHT :system :units.system/METRIC}
+  {:name "Kilogram" :code "kg" :type :units.type/WEIGHT :system :units.system/METRIC}
+
+  {:name "Each" :code "ea" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Pallet" :code "pallet" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Case" :code "case" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
+
+ ;;  The conversions between units of measure
+ :conversions
+
+ [{:from "lb"
+   :to "gr"
+   :quantity 453.1}
+
+  {:from "kg"
+   :to "gr"
+   :quantity 1000.0}
+
+  {:from "gr"
+   :to "gr"
+   :quantity 1.0}]
+
+
+;;  Seed items, both ingredient and recipe
+ :items
+
+ [{:name "Salt" :yield 1.0 :uom "gr"}
+
+  {:name "Pepper" :yield 1.0 :uom "gr"}
+
+  {:name "Sauce"
+   :yield 100.0
+   :uom "gr"
+   :items [{:name "Salt"
+            :quantity 50.0
+            :uom "gr"}
+           {:name "Pepper"
+            :quantity 50.0
+            :uom "gr"}]}
+
+  {:name "Wrap"
+   :yield 11.0
+   :uom "gr"
+   :items [{:name "Sauce"
+            :quantity 50.0
+            :uom "gr"}]}]
+
+;;  Prices
+ :company-items
+
+ [{:item "Salt"
+   :name "Sea Salt, Fine"
+   :description "Sea salt, description"
+   :company "ABC Organics"
+   :sku "SAL-001"
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2024-01-21"
+             :cost 10.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}
+
+  {:item "Pepper"
+   :name "Pepper, whole, malabaar"
+   :description "Pepper description"
+   :company "Nut Site"
+   :sku "P001"
+   :quotes [{:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}]}
