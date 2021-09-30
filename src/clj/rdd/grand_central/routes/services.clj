@@ -4,7 +4,7 @@
             [reitit.ring.coercion :as coercion]
             [reitit.ring.middleware.exception :as exception]
             [postmortem.core :as pm]
-            [rdd.grand-central.db.core :as db]
+            [rdd.grand-central.services.store]
             [reitit.ring.middleware.multipart :as multipart]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.ring.middleware.parameters :as parameters]
@@ -89,7 +89,7 @@
             :handler (fn [request]
                        (let [item-name (-> request :parameters :path :item-name)]
                          {:status 200
-                          :body {:item (db/item->tree item-name)}}))}}]]
+                          :body {:item (store/item->tree item-name)}}))}}]]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]

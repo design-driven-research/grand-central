@@ -92,6 +92,15 @@
    :company-items (get-company-items)
    :quotes (get-quotes)})
 
+(defn item->tree
+  [name]
+  (d/pull (db) '[* {:measurement/uom [:uom/code]
+                    :cost/_item [:cost/uuid
+                                 :measurement/quantity
+                                 {:cost/item [:item/uuid]}
+                                 {:measurement/uom [:uom/code]}]
+                    :composite/contains ...}] [:item/name name]))
+
 (comment
 
   (get-items)

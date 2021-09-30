@@ -13,16 +13,12 @@
 
 (defonce db-conn (atom nil))
 
-(defstate client
-  :start (let [c (d/client {:server-type :dev-local
-                            :storage-dir :mem
-                            :system "dev"})]
-           (*reset-db!
-            "rdd"
-            "resources/schema/core.edn"
-            "resources/seeds/simple.edn"
-            c)
-           c))
+(defstate ^{:on-reload :noop} client
+  :start (let [new-client (d/client {:server-type :dev-local
+                                     :storage-dir :mem
+                                     :system "dev"})]
+           (*reset-db! new-client :seed-path "resources/seeds/simple.edn")
+           new-client))
 
 (defn load-schema-data
   [path]
@@ -32,8 +28,12 @@
 
 (defn load-seed-data
   [path]
-  (-> (slurp path)
-      edn/read-string))
+  (when path
+    (try
+      (-> (slurp path)
+          edn/read-string)
+      (catch Exception _
+        (prn "Failed to load seed data")))))
 
 (defn install-schema
   [conn path]
@@ -71,11 +71,15 @@
 
 (defn create-items
   [data]
-  (for [{:keys [name yield uom]} (:items data)]
-    {:item/uuid (nano-id)
-     :item/name name
-     :measurement/uom [:uom/code uom]
-     :measurement/yield yield}))
+  (for [{:as item
+         :keys [name yield uom]} (:items data)]
+    (let [has-children? (:items item)
+          production-type (if has-children? :production.type/COMPOSITE :production.type/ATOM)]
+      {:item/uuid (nano-id)
+       :item/production-type production-type
+       :item/name name
+       :measurement/uom [:uom/code uom]
+       :measurement/yield yield})))
 
 (defn create-uom-seed-data
   [data]
@@ -170,57 +174,36 @@
           [item-updates children]))
       flatten))
 
-
 (defn- *reset-db!
-  [db-name schema-path seed-path client]
+  [client & {:keys [db-name schema-path seed-path]
+             :or {db-name "rdd"
+                  schema-path "resources/schema/core.edn"}}]
   (d/delete-database client {:db-name db-name})
   (d/create-database client {:db-name db-name})
+  (tap> "Resetting")
 
-  (let [seed-data (load-seed-data seed-path)
-        conn (d/connect client {:db-name db-name})]
+  (let [conn (d/connect client {:db-name db-name})]
     (install-schema conn schema-path)
-    (d/transact conn {:tx-data (create-companies-seed-data seed-data)})
-    (d/transact conn {:tx-data (create-uom-seed-data seed-data)})
-    (d/transact conn {:tx-data (create-items seed-data)})
-    (d/transact conn {:tx-data (create-recipes seed-data)})
-    (d/transact conn {:tx-data (create-conversion-seed-data seed-data)})
-    (d/transact conn {:tx-data (create-company-items-data seed-data)})
+    (when-let [seed-data (load-seed-data seed-path)]
+      (tap> "Installing seed data")
+      (d/transact conn {:tx-data (create-companies-seed-data seed-data)})
+      (d/transact conn {:tx-data (create-uom-seed-data seed-data)})
+      (d/transact conn {:tx-data (create-items seed-data)})
+      (d/transact conn {:tx-data (create-recipes seed-data)})
+      (d/transact conn {:tx-data (create-conversion-seed-data seed-data)})
+      (d/transact conn {:tx-data (create-company-items-data seed-data)}))
     (reset! db-conn conn)))
 
-
-
 (defn reset-db!
-  []
-  (*reset-db!
-   "rdd"
-   "resources/schema/core.edn"
-   "resources/seeds/simple.edn"
-   client))
-
-#_(defn item->tree
-    [name]
-    (d/pull (d/db @db-conn) '[* {:measurement/uom [:uom/code]
-                                 :cost/_item [:cost/uuid
-                                              :measurement/quantity
-                                              {:cost/item [:item/uuid]}
-                                              {:measurement/uom [:uom/code]}]
-                                 :composite/contains ...}] [:item/name name]))
+  [& {:keys [seed?]
+      :or {seed? true}}]
+  (if seed?
+    (*reset-db! client :seed-path "resources/seeds/simple.edn")
+    (*reset-db! client)))
 
 #_(reset-db!)
+#_(reset-db! :seed? false)
 
-#_(item->tree "Chorizo Family Pack")
+#_(tap> (d/datoms (d/db @db-conn) {:index :eavt}))
 
-
-(*reset-db!
- "rdd"
- "resources/schema/core.edn"
- "resources/seeds/simple.edn"
- client)
-(tap> (d/datoms (d/db @db-conn) {:index :avet}))
-
-(d/delete-database client {:db-name "rdd"})
-
-(d/db client)
-
-
-(d/db @db-conn)
+#_(d/delete-database client {:db-name "rdd"})

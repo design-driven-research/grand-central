@@ -1,12 +1,4 @@
-{:schema [{:db/ident :units.system/IMPERIAL}
-          {:db/ident :units.system/METRIC}
-          {:db/ident :units.system/CUSTOM}
-
-          {:db/ident :units.type/WEIGHT}
-          {:db/ident :units.type/VOLUME}
-          {:db/ident :units.type/CUSTOM}
-
-          ;;   Companies
+{:schema [;;   Companies
           {:db/ident :company/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
@@ -23,6 +15,9 @@
            :db/cardinality :db.cardinality/many}
 
           ;;   Items
+          {:db/ident :production.type/ATOM}
+          {:db/ident :production.type/COMPOSITE}
+
           {:db/ident :item/uuid
            :db/unique :db.unique/identity
            :db/valueType :db.type/string
@@ -33,6 +28,9 @@
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
+          {:db/ident :item/production-type
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
 
           ;; CompanyItems
           {:db/ident :company-item/uuid
@@ -118,7 +116,6 @@
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
-
         ;;   Generic values
         ;;   Information
           {:db/ident :info/description
@@ -126,6 +123,15 @@
            :db/cardinality :db.cardinality/one}
 
         ;;   Measurement
+          ;; Enums - Measurement system
+          {:db/ident :units.system/IMPERIAL}
+          {:db/ident :units.system/METRIC}
+          {:db/ident :units.system/CUSTOM}
+
+          {:db/ident :units.type/WEIGHT}
+          {:db/ident :units.type/VOLUME}
+          {:db/ident :units.type/CUSTOM}
+
           {:db/ident :measurement/quantity
            :db/valueType :db.type/double
            :db/cardinality :db.cardinality/one}
@@ -156,7 +162,6 @@
           {:db/ident :date/valid-to
            :db/valueType :db.type/instant
            :db/cardinality :db.cardinality/one}
-
 
           ;; 
           ]}

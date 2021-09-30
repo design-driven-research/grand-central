@@ -39,20 +39,20 @@
   {:name "Pepper" :yield 1.0 :uom "gr"}
 
   {:name "Sauce"
-   :yield 100.0
-   :uom "gr"
+   :yield 1.0
+   :uom "lb"
    :items [{:name "Salt"
-            :quantity 50.0
-            :uom "gr"}
+            :quantity 1.0
+            :uom "lb"}
            {:name "Pepper"
-            :quantity 50.0
-            :uom "gr"}]}
+            :quantity 1.0
+            :uom "lb"}]}
 
   {:name "Wrap"
-   :yield 11.0
-   :uom "gr"
+   :yield 1.0
+   :uom "lb"
    :items [{:name "Sauce"
-            :quantity 50.0
+            :quantity 1000.0
             :uom "gr"}]}]
 
 ;;  Prices
