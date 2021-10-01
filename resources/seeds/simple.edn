@@ -2,7 +2,9 @@
  :companies
 
  [{:name "Nut Site"}
-  {:name "ABC Organics"}]
+  {:name "ABC Organics"}
+  {:name "Better Life"}
+  {:name "H&L"}]
 
 ;;  The standard units of measure
  :uoms
@@ -13,7 +15,9 @@
 
   {:name "Each" :code "ea" :type :units.type/CUSTOM :system :units.system/CUSTOM}
   {:name "Pallet" :code "pallet" :type :units.type/CUSTOM :system :units.system/CUSTOM}
-  {:name "Case" :code "case" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
+  {:name "Case" :code "case" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Bunch" :code "bunch" :type :units.type/CUSTOM :system :units.system/CUSTOM}
+  {:name "Leaf" :code "leaf" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
 
  ;;  The conversions between units of measure
  :conversions
@@ -38,6 +42,8 @@
 
   {:name "Pepper" :yield 1.0 :uom "gr"}
 
+  {:name "Collards" :yield 1.0 :uom "leaf"}
+
   {:name "Sauce"
    :yield 1.0
    :uom "lb"
@@ -53,12 +59,48 @@
    :uom "lb"
    :items [{:name "Sauce"
             :quantity 1000.0
-            :uom "gr"}]}]
+            :uom "gr"}
+           {:name "Collards"
+            :quantity 2.0
+            :uom "leaf"}]}]
 
 ;;  Prices
  :company-items
 
- [{:item "Salt"
+ [{:item "Collards"
+   :name "Collard greens, whole"
+   :description "Lakeside Collard Greens"
+   :company "H&L"
+   :sku "COL-002"
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2024-01-21"
+             :cost 40.0
+             :uom "case"
+             :quantity 1.0}]
+   :conversions [{:from "case"
+                  :to "bunch"
+                  :quantity 24.0}
+                 {:from "bunch"
+                  :to "leaf"
+                  :quantity 10.0}]}
+  {:item "Collards"
+   :name "Collard greens, whole"
+   :description "Cal-O Collard Greens"
+   :company "Better Life"
+   :sku "COL-001"
+   :quotes [{:valid-from "1981-01-21"
+             :valid-to "2024-01-21"
+             :cost 30.0
+             :uom "case"
+             :quantity 1.0}]
+   :conversions [{:from "case"
+                  :to "bunch"
+                  :quantity 24.0}
+                 {:from "bunch"
+                  :to "leaf"
+                  :quantity 7.0}]}
+
+  {:item "Salt"
    :name "Sea Salt, Fine"
    :description "Sea salt, description"
    :company "ABC Organics"
