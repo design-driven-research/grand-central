@@ -1,5 +1,10 @@
 (ns rdd.grand-central.services.store
   (:require [datomic.client.api :as d]
+            [clojure.edn :as edn]
+            [rdd.grand-central.validation.db-spec :as db-spec]
+            [clojure.spec.alpha :as s]
+            [clojure.repl :refer [doc]]
+            [spec-coerce.core :as sc]
             [rdd.grand-central.db.core :as db-core]))
 
 (defn conn
@@ -81,6 +86,17 @@
                   [?eid :quote/uuid ?uuid]]
                 (db))))
 
+(defn coerce
+  [datom]
+  (let [[db-fn eid attr value] datom
+        coerced (sc/coerce attr value)]
+    [db-fn eid attr coerced]))
+
+(defn transact-from-remote!
+  [tx-data]
+  (let [coerced-tx-data (map coerce tx-data)]
+    (d/transact (conn) {:tx-data coerced-tx-data})))
+
 (defn initial-data
   "Load initial data"
   []
@@ -102,7 +118,6 @@
                     :composite/contains ...}] [:item/name name]))
 
 (comment
-
   (get-items)
   (get-recipe-line-items)
   (get-uoms)

@@ -51,6 +51,20 @@
             {:url "/api/swagger.json"
              :config {:validator-url nil}})}]]
 
+   ["/transactor"
+    {:post {:summary "The transactor endpoint. Handles datomic/datascript tx-data"
+            :parameters {:body {:topic keyword?
+                                :tx-data vector?}}
+            :responses {200 {:body {:result map?}}
+                        400 {:body {:error string?}}}
+            :handler (fn [request]
+                       (let [tx-data (-> request :body-params :tx-data)
+                             result (store/transact-from-remote! tx-data)]
+                         (tap> {:tx-data tx-data
+                                :result result})
+                         {:status 200
+                          :body {:result {:msg "Success"}}}))}}]
+
    ["/custom"
     ["/initial-data"
      {:get {:summary "Load initial data"
