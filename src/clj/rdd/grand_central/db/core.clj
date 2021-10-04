@@ -67,7 +67,7 @@
   {:db/id temp-id
    :recipe-line-item/uuid (nano-id)
    :meta/position position
-   :composite/contains [[:item/name name]]
+   :recipe-line-item/item [:item/name name]
    :measurement/quantity quantity
    :measurement/uom [:uom/code uom]})
 

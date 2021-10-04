@@ -61,6 +61,10 @@
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 
+          {:db/ident :recipe-line-item/item
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
           {:db/ident :recipe-line-item/company-item
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}

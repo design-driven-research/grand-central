@@ -103,7 +103,7 @@
             :handler (fn [request]
                        (let [item-name (-> request :parameters :path :item-name)]
                          {:status 200
-                          :body {:item (store/item->tree item-name)}}))}}]]
+                          :body {:item {} #_(store/item->tree item-name)}}))}}]]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]

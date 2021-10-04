@@ -43,7 +43,8 @@
   []
   (flatten (d/q '[:find (pull ?eid [*
                                     {:measurement/uom [:uom/uuid]
-                                     :composite/contains [:item/uuid]}])
+                                     :recipe-line-item/item [:item/uuid]
+                                     :recipe-line-item/company-item [:company-item/uuid]}])
                   :where
                   [?eid :recipe-line-item/uuid ?uuid]]
                 (db))))
@@ -108,14 +109,14 @@
    :company-items (get-company-items)
    :quotes (get-quotes)})
 
-(defn item->tree
-  [name]
-  (d/pull (db) '[* {:measurement/uom [:uom/code]
-                    :cost/_item [:cost/uuid
-                                 :measurement/quantity
-                                 {:cost/item [:item/uuid]}
-                                 {:measurement/uom [:uom/code]}]
-                    :composite/contains ...}] [:item/name name]))
+#_(defn item->tree
+    [name]
+    (d/pull (db) '[* {:measurement/uom [:uom/code]
+                      :cost/_item [:cost/uuid
+                                   :measurement/quantity
+                                   {:cost/item [:item/uuid]}
+                                   {:measurement/uom [:uom/code]}]
+                      :composite/contains ...}] [:item/name name]))
 
 (comment
   (get-items)
