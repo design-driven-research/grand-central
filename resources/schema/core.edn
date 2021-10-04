@@ -161,5 +161,10 @@
            :db/valueType :db.type/instant
            :db/cardinality :db.cardinality/one}
 
+          ;; Sorting
+          {:db/ident :meta/position
+           :db/valueType :db.type/long
+           :db/cardinality :db.cardinality/one}
+
           ;; 
           ]}

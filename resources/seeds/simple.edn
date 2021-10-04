@@ -39,9 +39,11 @@
  :items
 
  [{:name "Salt" :yield 1.0 :uom "gr"}
-
   {:name "Pepper" :yield 1.0 :uom "gr"}
-
+  {:name "Paprika" :yield 1.0 :uom "gr"}
+  {:name "Fenugreek" :yield 1.0 :uom "gr"}
+  {:name "Asafoetida" :yield 1.0 :uom "gr"}
+  {:name "Cardamom" :yield 1.0 :uom "gr"}
   {:name "Collards" :yield 1.0 :uom "leaf"}
 
   {:name "Sauce"
@@ -51,6 +53,18 @@
             :quantity 1.0
             :uom "lb"}
            {:name "Pepper"
+            :quantity 1.0
+            :uom "lb"}
+           {:name "Paprika"
+            :quantity 1.0
+            :uom "lb"}
+           {:name "Fenugreek"
+            :quantity 1.0
+            :uom "lb"}
+           {:name "Asafoetida"
+            :quantity 1.0
+            :uom "lb"}
+           {:name "Cardamom"
             :quantity 1.0
             :uom "lb"}]}
 
@@ -62,7 +76,10 @@
             :uom "gr"}
            {:name "Collards"
             :quantity 2.0
-            :uom "leaf"}]}]
+            :uom "leaf"}
+           {:name "Cardamom"
+            :quantity 2.0
+            :uom "gr"}]}]
 
 ;;  Prices
  :company-items
@@ -122,6 +139,75 @@
    :description "Pepper description"
    :company "Nut Site"
    :sku "P001"
+   :quotes [{:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}
+
+  {:item "Paprika"
+   :name "Paprika, powder"
+   :description "Paprika description"
+   :company "Nut Site"
+   :sku "PAP-001"
+   :quotes [{:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}
+
+  {:item "Fenugreek"
+   :name "Fenugreek, whole, malabaar"
+   :description "Fenugreek description"
+   :company "Nut Site"
+   :sku "FEN-001"
+   :quotes [{:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}
+
+  {:item "Asafoetida"
+   :name "Asafoetida, whole, malabaar"
+   :description "Asafoetida description"
+   :company "Nut Site"
+   :sku "ASA-001"
+   :quotes [{:valid-from "2021-01-22"
+             :valid-to "2024-01-21"
+             :cost 1.0
+             :uom "lb"
+             :quantity 1.0}]
+   :conversions [{:from "pallet"
+                  :to "case"
+                  :quantity 10.0}
+                 {:from "case"
+                  :to "lb"
+                  :quantity 10.0}]}
+
+
+  {:item "Cardamom"
+   :name "Cardamom, whole, malabaar"
+   :description "Cardamom description"
+   :company "Nut Site"
+   :sku "CAR-001"
    :quotes [{:valid-from "2021-01-22"
              :valid-to "2024-01-21"
              :cost 1.0

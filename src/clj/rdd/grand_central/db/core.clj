@@ -6,6 +6,7 @@
    [nano-id.core :refer [nano-id]]
    [tick.core :as t]
    [tick.locale-en-us]
+   [rdd.grand-central.utils.utils :refer [for-indexed spread-across-space]]
    [postmortem.core :as pm]
    [rdd.grand-central.config :refer [env]]))
 
@@ -62,9 +63,10 @@
      :company/name name}))
 
 (defn create-relationship
-  [{:keys [name quantity uom temp-id]}]
+  [{:keys [name quantity uom temp-id]} position]
   {:db/id temp-id
    :recipe-line-item/uuid (nano-id)
+   :meta/position position
    :composite/contains [[:item/name name]]
    :measurement/quantity quantity
    :measurement/uom [:uom/code uom]})
@@ -157,6 +159,7 @@
 
 (defn create-recipes
   [data]
+
   (-> (for [{:keys [name items]} (:items data)]
         (let [;; Create and merge in temp ids into the children collection
               children-with-temp-ids (map #(assoc % :temp-id (rand-int -10000000)) items)
@@ -164,8 +167,15 @@
               ;; We need temp ids for the recipe line items so we can ref them in the parent item contains field
               temp-ids (map :temp-id children-with-temp-ids)
 
+              ;; Create position spacing
+              total-children (count children-with-temp-ids)
+              child-positions (spread-across-space 9007199254740991 total-children)
+
+
+
               ;; Create the recipe line items recursively
-              children (for [child children-with-temp-ids] (create-relationship child))
+              children (for-indexed [child idx children-with-temp-ids]
+                                    (create-relationship child (nth child-positions idx)))
 
               ;; Update the parent with the recipe line items
               item-updates {:db/id [:item/name name] :composite/contains (vec temp-ids)}]

@@ -1,7 +1,8 @@
 {:linters
- {:clj-kondo.hooks.defquery/argument-type {:level :error}}
+ {:for-indexed/missing-index {:level :error}}
 
  :hooks
- {:analyze-call {neo4j-clj.core/defquery hooks.defquery/defquery}}
+ {:analyze-call {rdd.grand-central.utils.utils/for-indexed hooks.for-indexed/for-indexed}}
 
  :lint-as {mount.core/defstate clojure.core/def}}
+
