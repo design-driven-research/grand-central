@@ -34,6 +34,15 @@
       "menuSelections": {
         "leinProfiles": ["dev", "reveal"]
       }
+    },
+    {
+      "name": "Grand Central - Server",
+      "projectType": "Leiningen",
+      "afterCLJReplJackInCode": "(in-ns 'user) (start) (println \"Access the server at http://localhost:3000\")",
+      "cljsType": "none",
+      "menuSelections": {
+        "leinProfiles": ["dev"]
+      }
     }
   ],
   "files.exclude": {}
