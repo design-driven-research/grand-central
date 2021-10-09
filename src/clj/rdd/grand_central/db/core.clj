@@ -63,13 +63,18 @@
      :company/name name}))
 
 (defn create-relationship
-  [{:keys [name quantity uom temp-id]} position]
-  {:db/id temp-id
-   :recipe-line-item/uuid (nano-id)
-   :meta/position position
-   :recipe-line-item/item [:item/name name]
-   :measurement/quantity quantity
-   :measurement/uom [:uom/code uom]})
+  [{:keys [child position company-item-sku]}]
+  (let [{:keys [name quantity uom temp-id]} child]
+    (cond-> {:db/id temp-id
+             :recipe-line-item/uuid (nano-id)
+             :meta/position position
+             :recipe-line-item/item [:item/name name]
+             :measurement/quantity quantity
+             :measurement/uom [:uom/code uom]}
+      company-item-sku (assoc :recipe-line-item/company-item [:company-item/sku company-item-sku]))))
+#_(pm/logs)
+#_(pm/reset!)
+
 
 (defn create-items
   [data]
@@ -117,9 +122,8 @@
                               conversions]} (:company-items data)]
 
 
-                  (let [company-item-temp-id (rand-int -10000000)
-                        conversion-payloads (for [{:keys [from to quantity]} conversions]
-                                              (let [conversion-temp-id (rand-int -10000000)]
+                  (let [conversion-payloads (for [{:keys [from to quantity]} conversions]
+                                              (let [conversion-temp-id (nano-id)]
                                                 {:db/id conversion-temp-id
                                                  :conversion/uuid (nano-id)
                                                  :conversion/from [:uom/code from]
@@ -128,7 +132,7 @@
                         conversion-ids (map :db/id conversion-payloads)
 
                         quote-payloads (for [{:keys [uom quantity cost valid-from valid-to]} quotes]
-                                         (let [quote-temp-id (rand-int -10000000)
+                                         (let [quote-temp-id (nano-id)
                                                valid-from (date-str-to->inst valid-from)
                                                valid-to (date-str-to->inst valid-to)]
                                            {:db/id quote-temp-id
@@ -139,7 +143,7 @@
                                             :measurement/quantity quantity
                                             :currency.usd/cost cost}))
                         quote-ids (map :db/id quote-payloads)
-                        company-item-payload {:db/id company-item-temp-id
+                        company-item-payload {:db/id sku
                                               :company-item/uuid (nano-id)
                                               :company-item/sku sku
                                               :company-item/name name
@@ -148,7 +152,7 @@
                                               :company-item/quotes quote-ids
                                               :uom/conversions conversion-ids}
                         company-update-payload {:db/id [:company/name company]
-                                                :company/company-items company-item-temp-id}]
+                                                :company/company-items sku}]
 
                     [company-update-payload
                      company-item-payload
@@ -157,32 +161,42 @@
 
     (flatten payload)))
 
+(defn find-company-item-by-item-name
+  [company-items item-name]
+  (let [matches (filter #(= item-name (:item %)) company-items)]
+    (first matches)))
+
 (defn create-recipes
   [data]
 
-  (-> (for [{:keys [name items]} (:items data)]
-        (let [;; Create and merge in temp ids into the children collection
-              children-with-temp-ids (map #(assoc % :temp-id (rand-int -10000000)) items)
+  (let [company-items (:company-items data)
+        items (:items data)]
+    (-> (for [{:keys [name line-items]} items]
+          (let [;; Create and merge in temp ids into the children collection
+                children-with-temp-ids (map #(assoc % :temp-id (nano-id)) line-items)
 
               ;; We need temp ids for the recipe line items so we can ref them in the parent item contains field
-              temp-ids (map :temp-id children-with-temp-ids)
+                temp-ids (map :temp-id children-with-temp-ids)
 
               ;; Create position spacing
-              total-children (count children-with-temp-ids)
-              child-positions (spread-across-space 9007199254740991 total-children)
-
-
+                total-children (count children-with-temp-ids)
+                child-positions (spread-across-space 9007199254740991 total-children)
 
               ;; Create the recipe line items recursively
-              children (for-indexed [child idx children-with-temp-ids]
-                                    (create-relationship child (nth child-positions idx)))
+                children (for-indexed [child idx children-with-temp-ids]
+                                      (let [child-item-name (:name child)
+                                            default-company-item (find-company-item-by-item-name company-items child-item-name)
+                                            default-company-item-sku (:sku default-company-item)]
+                                        (create-relationship {:child child
+                                                              :position (nth child-positions idx)
+                                                              :company-item-sku default-company-item-sku})))
 
               ;; Update the parent with the recipe line items
-              item-updates {:db/id [:item/name name] :composite/contains (vec temp-ids)}]
+                item-updates {:db/id [:item/name name] :composite/contains (vec temp-ids)}]
 
           ;; Final results
-          [item-updates children]))
-      flatten))
+            [item-updates children]))
+        flatten)))
 
 (defn- *reset-db!
   [client & {:keys [db-name schema-path seed-path]
@@ -199,9 +213,9 @@
       (d/transact conn {:tx-data (create-companies-seed-data seed-data)})
       (d/transact conn {:tx-data (create-uom-seed-data seed-data)})
       (d/transact conn {:tx-data (create-items seed-data)})
-      (d/transact conn {:tx-data (create-recipes seed-data)})
       (d/transact conn {:tx-data (create-conversion-seed-data seed-data)})
-      (d/transact conn {:tx-data (create-company-items-data seed-data)}))
+      (d/transact conn {:tx-data (create-company-items-data seed-data)})
+      (d/transact conn {:tx-data (create-recipes seed-data)}))
     (reset! db-conn conn)))
 
 (defn reset-db!
@@ -210,8 +224,6 @@
   (if seed?
     (*reset-db! client :seed-path "resources/seeds/simple.edn")
     (*reset-db! client)))
-
-
 
 #_(reset-db!)
 #_(reset-db! :seed? false)

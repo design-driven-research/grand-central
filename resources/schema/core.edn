@@ -43,6 +43,7 @@
            :db/cardinality :db.cardinality/one}
 
           {:db/ident :company-item/sku
+           :db/unique :db.unique/identity
            :db/valueType :db.type/string
            :db/cardinality :db.cardinality/one}
 

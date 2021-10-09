@@ -49,37 +49,37 @@
   {:name "Sauce"
    :yield 1.0
    :uom "lb"
-   :items [{:name "Salt"
-            :quantity 1.0
-            :uom "lb"}
-           {:name "Pepper"
-            :quantity 1.0
-            :uom "lb"}
-           {:name "Paprika"
-            :quantity 1.0
-            :uom "lb"}
-           {:name "Fenugreek"
-            :quantity 1.0
-            :uom "lb"}
-           {:name "Asafoetida"
-            :quantity 1.0
-            :uom "lb"}
-           {:name "Cardamom"
-            :quantity 1.0
-            :uom "lb"}]}
+   :line-items [{:name "Salt"
+                 :quantity 1.0
+                 :uom "lb"}
+                {:name "Pepper"
+                 :quantity 1.0
+                 :uom "lb"}
+                {:name "Paprika"
+                 :quantity 1.0
+                 :uom "lb"}
+                {:name "Fenugreek"
+                 :quantity 1.0
+                 :uom "lb"}
+                {:name "Asafoetida"
+                 :quantity 1.0
+                 :uom "lb"}
+                {:name "Cardamom"
+                 :quantity 1.0
+                 :uom "lb"}]}
 
   {:name "Wrap"
    :yield 1.0
    :uom "lb"
-   :items [{:name "Sauce"
-            :quantity 1000.0
-            :uom "gr"}
-           {:name "Collards"
-            :quantity 2.0
-            :uom "leaf"}
-           {:name "Cardamom"
-            :quantity 2.0
-            :uom "gr"}]}]
+   :line-items [{:name "Sauce"
+                 :quantity 1000.0
+                 :uom "gr"}
+                {:name "Collards"
+                 :quantity 2.0
+                 :uom "leaf"}
+                {:name "Cardamom"
+                 :quantity 2.0
+                 :uom "gr"}]}]
 
 ;;  Prices
  :company-items
