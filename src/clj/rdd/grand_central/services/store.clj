@@ -4,6 +4,7 @@
             [rdd.grand-central.validation.db-spec :as db-spec]
             [clojure.spec.alpha :as s]
             [clojure.repl :refer [doc]]
+            [postmortem.core :as pm]
             [spec-coerce.core :as sc]
             [rdd.grand-central.db.core :as db-core]))
 
@@ -95,8 +96,22 @@
 
 (defn transact-from-remote!
   [tx-data]
+  (pm/spy>> :from-remote tx-data)
   (let [coerced-tx-data (map coerce tx-data)]
     (d/transact (conn) {:tx-data coerced-tx-data})))
+
+#_(pm/reset!)
+#_(pm/log-for :from-remote)
+  ;; => [[[:db/add
+  ;;       [:recipe-line-item/uuid "nNN6y6ImyIHXPEcIOcHvZ"]
+  ;;       :recipe-line-item/company-item
+  ;;       [:company-item/uuid "e4OcffmS9HU-9FkLF0L6i"]]]]
+
+;; => [[[:db/add
+;;       [:recipe-line-item/uuid "YzZhgyPiLPCvI0TXclr9z"]
+;;       :recipe-line-item/company-item
+;;       [:company-item/uuid "7k_ebFF2lQLyj6vw9N0qd"]]]]
+
 
 (defn initial-data
   "Load initial data"
@@ -121,295 +136,7 @@
 (comment
   (get-items)
   (get-recipe-line-items)
-  ;; => ({:db/id 96757023244450,
-  ;;      :recipe-line-item/uuid "yUyKzE-NtGm-_9VWSIp-Z",
-  ;;      :recipe-line-item/item #:item{:uuid "bMZHGcJJh2zispw2j-gox"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "s8-BdhZP88dPhBaKfSYN7"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 1286742750677284}
-  ;;     {:db/id 96757023244451,
-  ;;      :recipe-line-item/uuid "oKrBTEYiX8WqIZFpHH19M",
-  ;;      :recipe-line-item/item #:item{:uuid "PSySyvnZqHFXn5qyr8Tz8"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "EOGEtr3Sverg6nONMK7we"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 2573485501354568}
-  ;;     {:db/id 96757023244452,
-  ;;      :recipe-line-item/uuid "D630OEfNfwemNv2xw1-gj",
-  ;;      :recipe-line-item/item #:item{:uuid "KJU29o8XzNFiddLOnXhPQ"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "4Dkq6FYuC41vB9fgwu9Vf"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 3860228252031853}
-  ;;     {:db/id 96757023244453,
-  ;;      :recipe-line-item/uuid "Q-BCo2vNQOR0eua__oauq",
-  ;;      :recipe-line-item/item #:item{:uuid "b9NOS92v8FxNKDnokFTdc"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "nsO1zVQqK95brtQWokBZs"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 5146971002709137}
-  ;;     {:db/id 96757023244454,
-  ;;      :recipe-line-item/uuid "BK4OOtQ_HrK3yUrCoa2fF",
-  ;;      :recipe-line-item/item #:item{:uuid "_sVQTnYwcDXs2eMuu9Uk4"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "762wXrZHsJlT3yEr6Kcra"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 6433713753386422}
-  ;;     {:db/id 96757023244455,
-  ;;      :recipe-line-item/uuid "m6hXXTWqNLMW-3QPNvDCz",
-  ;;      :recipe-line-item/item #:item{:uuid "jeKQM9OY9rnYRKlTt0sRu"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "UXpulM8FwJeIPEmiCPIzB"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "HH66_A1pKyREkChKfYuJ6"},
-  ;;      :meta/position 7720456504063706}
-  ;;     {:db/id 96757023244456,
-  ;;      :recipe-line-item/uuid "R-TGp8Tuf2jhSLD29lrHW",
-  ;;      :recipe-line-item/item #:item{:uuid "-CkOmBUwPqTNg7bsqG2Nk"},
-  ;;      :measurement/quantity 1000.0,
-  ;;      :measurement/uom #:uom{:uuid "kgGALZbLHZxGWLfVb5XE1"},
-  ;;      :meta/position 2251799813685247}
-  ;;     {:db/id 96757023244457,
-  ;;      :recipe-line-item/uuid "QvTVNnHWw0LU5RUdeJpsf",
-  ;;      :recipe-line-item/item #:item{:uuid "NRbdyIs7yqIE0OaL4Vpkp"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "lyUKwqRH5xWW2pJVcTCuM"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "XFbqocZfWw75FtPj8i05_"},
-  ;;      :meta/position 4503599627370495}
-  ;;     {:db/id 96757023244458,
-  ;;      :recipe-line-item/uuid "EYDhhabOyL1s1ngGL9AkV",
-  ;;      :recipe-line-item/item #:item{:uuid "jeKQM9OY9rnYRKlTt0sRu"},
-  ;;      :recipe-line-item/company-item #:company-item{:uuid "UXpulM8FwJeIPEmiCPIzB"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "kgGALZbLHZxGWLfVb5XE1"},
-  ;;      :meta/position 6755399441055743})
 
-  ;; => ({:db/id 74766790688895,
-  ;;      :recipe-line-item/uuid "IokuDmoZN71t8Vpr9yFCg",
-  ;;      :recipe-line-item/item #:item{:uuid "dObUcn1iBPn8mKNAUU-0p"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 1286742750677284}
-  ;;     {:db/id 74766790688896,
-  ;;      :recipe-line-item/uuid "Gl3hX4rL36d6y2VtALMDt",
-  ;;      :recipe-line-item/item #:item{:uuid "B0lSqA_d12RFv0N-0xd1h"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 2573485501354568}
-  ;;     {:db/id 74766790688897,
-  ;;      :recipe-line-item/uuid "NSMIDOq1aoK7Jc6rTTctq",
-  ;;      :recipe-line-item/item #:item{:uuid "Ix4XfgYpTjArGWo2H_apc"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 3860228252031853}
-  ;;     {:db/id 74766790688898,
-  ;;      :recipe-line-item/uuid "xuXD0OZZ5WGbzZPJ1hHNb",
-  ;;      :recipe-line-item/item #:item{:uuid "z7Ivu6KjVJT4GKRJlHm7K"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 5146971002709137}
-  ;;     {:db/id 74766790688899,
-  ;;      :recipe-line-item/uuid "WcGkKTd11TScD1wYlISYh",
-  ;;      :recipe-line-item/item #:item{:uuid "sitgzQR_Cpa_tGo5AFmwC"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 6433713753386422}
-  ;;     {:db/id 74766790688900,
-  ;;      :recipe-line-item/uuid "VM1FQgyhZjg6aAARQSB0D",
-  ;;      :recipe-line-item/item #:item{:uuid "7xEpudE0HvfN2jQN-fzuV"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "vDzXXrpF2A9qWBHtEWdM-"},
-  ;;      :meta/position 7720456504063706}
-  ;;     {:db/id 74766790688901,
-  ;;      :recipe-line-item/uuid "yCy0rMxV-OFXQFhN4-sew",
-  ;;      :recipe-line-item/item #:item{:uuid "bptlxfcE_xvyYh8aZ9X78"},
-  ;;      :measurement/quantity 1000.0,
-  ;;      :measurement/uom #:uom{:uuid "VndKDhzT-AZBqHs811PYE"},
-  ;;      :meta/position 2251799813685247}
-  ;;     {:db/id 74766790688902,
-  ;;      :recipe-line-item/uuid "7GR6e6Rrxf0oLb4eqlFzV",
-  ;;      :recipe-line-item/item #:item{:uuid "6HOB4XFBGbLLC6T6xivL3"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "JQiZlnapKZbbrjpv7xwDQ"},
-  ;;      :meta/position 4503599627370495}
-  ;;     {:db/id 74766790688903,
-  ;;      :recipe-line-item/uuid "us6JvJjmqZsNvpX-WXdAw",
-  ;;      :recipe-line-item/item #:item{:uuid "7xEpudE0HvfN2jQN-fzuV"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "VndKDhzT-AZBqHs811PYE"},
-  ;;      :meta/position 6755399441055743})
-
-  ;; => ()
-
-
-
-  ;; => Execution error (IllegalArgumentException) at datomic.client.api.protocols/fn$G (protocols.clj:72).
-  ;;    No implementation of method: :db of protocol: #'datomic.client.api.protocols/Connection found for class: nil
-
-  ;; => ({:db/id 4611681620380876927,
-  ;;      :recipe-line-item/uuid "UabF0nwZo3KXcGX9226_k",
-  ;;      :recipe-line-item/item #:item{:uuid "uaoc9bC_utmh6Uy8KYII3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 1286742750677284}
-  ;;     {:db/id 4611681620380876928,
-  ;;      :recipe-line-item/uuid "7vP3d_bG-C19u4nx2zvaM",
-  ;;      :recipe-line-item/item #:item{:uuid "2SJ3Gez06WX4HfKqw6LE3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 2573485501354568}
-  ;;     {:db/id 4611681620380876929,
-  ;;      :recipe-line-item/uuid "Tbinhms4rJhGLdMyvlM9L",
-  ;;      :recipe-line-item/item #:item{:uuid "v4RyKyvWd3PKG52id4BLj"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 3860228252031853}
-  ;;     {:db/id 4611681620380876930,
-  ;;      :recipe-line-item/uuid "stq63PArHTIUQ_qGNLf3y",
-  ;;      :recipe-line-item/item #:item{:uuid "Sj2r_EzDPhSzoD1DgORVZ"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 5146971002709137}
-  ;;     {:db/id 4611681620380876931,
-  ;;      :recipe-line-item/uuid "eHeySLXMM8M50XEXhvsEW",
-  ;;      :recipe-line-item/item #:item{:uuid "6DHfUgBE2RKjdiSWFEiqU"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 6433713753386422}
-  ;;     {:db/id 4611681620380876932,
-  ;;      :recipe-line-item/uuid "0EneYlH20fSwpTUhK1LG0",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 7720456504063706}
-  ;;     {:db/id 4611681620380876933,
-  ;;      :recipe-line-item/uuid "LYc1MknExFpy6kiVMy2pA",
-  ;;      :recipe-line-item/item #:item{:uuid "63rdM8btv1p-aO7TjMPq6"},
-  ;;      :measurement/quantity 1000.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 2251799813685247}
-  ;;     {:db/id 4611681620380876934,
-  ;;      :recipe-line-item/uuid "Xotq1WnVqPUM0LZJWodTU",
-  ;;      :recipe-line-item/item #:item{:uuid "S2bv3SV_MR0V9ke7QQ2YD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "dT1mu7vrKvM8eeyu1wYwq"},
-  ;;      :meta/position 4503599627370495}
-  ;;     {:db/id 4611681620380876935,
-  ;;      :recipe-line-item/uuid "gvyG_-gVbJ93AKp0AuaC2",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 6755399441055743})
-
-  ;; => ({:db/id 4611681620380876927,
-  ;;      :recipe-line-item/uuid "UabF0nwZo3KXcGX9226_k",
-  ;;      :recipe-line-item/item #:item{:uuid "uaoc9bC_utmh6Uy8KYII3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 1286742750677284}
-  ;;     {:db/id 4611681620380876928,
-  ;;      :recipe-line-item/uuid "7vP3d_bG-C19u4nx2zvaM",
-  ;;      :recipe-line-item/item #:item{:uuid "2SJ3Gez06WX4HfKqw6LE3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 2573485501354568}
-  ;;     {:db/id 4611681620380876929,
-  ;;      :recipe-line-item/uuid "Tbinhms4rJhGLdMyvlM9L",
-  ;;      :recipe-line-item/item #:item{:uuid "v4RyKyvWd3PKG52id4BLj"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 3860228252031853}
-  ;;     {:db/id 4611681620380876930,
-  ;;      :recipe-line-item/uuid "stq63PArHTIUQ_qGNLf3y",
-  ;;      :recipe-line-item/item #:item{:uuid "Sj2r_EzDPhSzoD1DgORVZ"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 5146971002709137}
-  ;;     {:db/id 4611681620380876931,
-  ;;      :recipe-line-item/uuid "eHeySLXMM8M50XEXhvsEW",
-  ;;      :recipe-line-item/item #:item{:uuid "6DHfUgBE2RKjdiSWFEiqU"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 6433713753386422}
-  ;;     {:db/id 4611681620380876932,
-  ;;      :recipe-line-item/uuid "0EneYlH20fSwpTUhK1LG0",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 7720456504063706}
-  ;;     {:db/id 4611681620380876933,
-  ;;      :recipe-line-item/uuid "LYc1MknExFpy6kiVMy2pA",
-  ;;      :recipe-line-item/item #:item{:uuid "63rdM8btv1p-aO7TjMPq6"},
-  ;;      :measurement/quantity 1000.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 2251799813685247}
-  ;;     {:db/id 4611681620380876934,
-  ;;      :recipe-line-item/uuid "Xotq1WnVqPUM0LZJWodTU",
-  ;;      :recipe-line-item/item #:item{:uuid "S2bv3SV_MR0V9ke7QQ2YD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "dT1mu7vrKvM8eeyu1wYwq"},
-  ;;      :meta/position 4503599627370495}
-  ;;     {:db/id 4611681620380876935,
-  ;;      :recipe-line-item/uuid "gvyG_-gVbJ93AKp0AuaC2",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 6755399441055743})
-
-  ;; => ({:db/id 4611681620380876927,
-  ;;      :recipe-line-item/uuid "UabF0nwZo3KXcGX9226_k",
-  ;;      :recipe-line-item/item #:item{:uuid "uaoc9bC_utmh6Uy8KYII3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 1286742750677284}
-  ;;     {:db/id 4611681620380876928,
-  ;;      :recipe-line-item/uuid "7vP3d_bG-C19u4nx2zvaM",
-  ;;      :recipe-line-item/item #:item{:uuid "2SJ3Gez06WX4HfKqw6LE3"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 2573485501354568}
-  ;;     {:db/id 4611681620380876929,
-  ;;      :recipe-line-item/uuid "Tbinhms4rJhGLdMyvlM9L",
-  ;;      :recipe-line-item/item #:item{:uuid "v4RyKyvWd3PKG52id4BLj"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 3860228252031853}
-  ;;     {:db/id 4611681620380876930,
-  ;;      :recipe-line-item/uuid "stq63PArHTIUQ_qGNLf3y",
-  ;;      :recipe-line-item/item #:item{:uuid "Sj2r_EzDPhSzoD1DgORVZ"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 5146971002709137}
-  ;;     {:db/id 4611681620380876931,
-  ;;      :recipe-line-item/uuid "eHeySLXMM8M50XEXhvsEW",
-  ;;      :recipe-line-item/item #:item{:uuid "6DHfUgBE2RKjdiSWFEiqU"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 6433713753386422}
-  ;;     {:db/id 4611681620380876932,
-  ;;      :recipe-line-item/uuid "0EneYlH20fSwpTUhK1LG0",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 1.0,
-  ;;      :measurement/uom #:uom{:uuid "t_JfU1udQ3_KGMsG2c_vU"},
-  ;;      :meta/position 7720456504063706}
-  ;;     {:db/id 4611681620380876933,
-  ;;      :recipe-line-item/uuid "LYc1MknExFpy6kiVMy2pA",
-  ;;      :recipe-line-item/item #:item{:uuid "63rdM8btv1p-aO7TjMPq6"},
-  ;;      :measurement/quantity 1000.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 2251799813685247}
-  ;;     {:db/id 4611681620380876934,
-  ;;      :recipe-line-item/uuid "Xotq1WnVqPUM0LZJWodTU",
-  ;;      :recipe-line-item/item #:item{:uuid "S2bv3SV_MR0V9ke7QQ2YD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "dT1mu7vrKvM8eeyu1wYwq"},
-  ;;      :meta/position 4503599627370495}
-  ;;     {:db/id 4611681620380876935,
-  ;;      :recipe-line-item/uuid "gvyG_-gVbJ93AKp0AuaC2",
-  ;;      :recipe-line-item/item #:item{:uuid "-gUmPHsBgyV69NAMBFlCD"},
-  ;;      :measurement/quantity 2.0,
-  ;;      :measurement/uom #:uom{:uuid "IHWLov37WPatBNNZRWKcN"},
-  ;;      :meta/position 6755399441055743})
 
   (get-uoms)
   (get-companies)

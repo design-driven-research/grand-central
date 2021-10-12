@@ -53,17 +53,18 @@
 
    ["/transactor"
     {:post {:summary "The transactor endpoint. Handles datomic/datascript tx-data"
-            :parameters {:body {:topic keyword?
-                                :tx-data vector?}}
-            :responses {200 {:body {:result map?}}
+
+            :responses {200 {:body {}}
                         400 {:body {:error string?}}}
             :handler (fn [request]
+                       (pm/spy>> :transactor {:request-data
+                                              (-> request :body-params :tx-data)})
                        (let [tx-data (-> request :body-params :tx-data)
                              result (store/transact-from-remote! tx-data)]
-                         (tap> {:tx-data tx-data
-                                :result result})
+
                          {:status 200
                           :body {:result {:msg "Success"}}}))}}]
+
 
    ["/custom"
     ["/initial-data"
@@ -126,3 +127,32 @@
 
   ;; 
   )
+
+
+#_(pm/reset!)
+#_(pm/logs)
+  ;; => {}
+
+  ;; => {:transactor
+  ;;     [{:request-data
+  ;;       [[:db/add
+  ;;         [:recipe-line-item/uuid "nNN6y6ImyIHXPEcIOcHvZ"]
+  ;;         :recipe-line-item/company-item
+  ;;         [:company-item/uuid "e4OcffmS9HU-9FkLF0L6i"]]]}],
+  ;;     :from-remote
+  ;;     [[[:db/add
+  ;;        [:recipe-line-item/uuid "nNN6y6ImyIHXPEcIOcHvZ"]
+  ;;        :recipe-line-item/company-item
+  ;;        [:company-item/uuid "e4OcffmS9HU-9FkLF0L6i"]]]]}
+
+  ;; => {:from-remote
+  ;;     [[[:db/add
+  ;;        [:recipe-line-item/uuid "YzZhgyPiLPCvI0TXclr9z"]
+  ;;        :recipe-line-item/company-item
+  ;;        [:company-item/uuid "7k_ebFF2lQLyj6vw9N0qd"]]]],
+  ;;     :transactor
+  ;;     [{:request-data
+  ;;       [[:db/add
+  ;;         [:recipe-line-item/uuid "F7xaCMScCYL_mi-vYcFUx"]
+  ;;         :recipe-line-item/company-item
+  ;;         [:company-item/uuid "z5pIUOgcJK5LLGW5YUTXa"]]]}]}

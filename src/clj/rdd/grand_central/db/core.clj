@@ -231,3 +231,27 @@
 #_(tap> (d/datoms (d/db @db-conn) {:index :eavt}))
 
 #_(d/delete-database client {:db-name "rdd"})
+
+
+
+
+#_(d/transact @db-conn {:tx-data [[:db/add -1 :company-item/uuid "vIM73g-llu-K6gYOBYgtK"]
+                                  [:db/add -1 :company-item/name "asdf"]
+                                  [:db/add -1 :company-item/sku "asdf"]
+                                  [:db/add -1 :company-item/item [:item/uuid "6ri3D10jZJgkBEGmqTrYr"]]
+                                  [:db/add -1 :company-item/quotes -2]
+                                  [:db/add
+                                   [:company/uuid "CppigamwVXerGpk2iYctA"]
+                                   :company/company-items
+                                   -1]
+                                  [:db/add -2 :quote/uuid "YudBHqXUvvcA6brhPb8dd"]
+                                  [:db/add -2 :currency.usd/cost 3]
+                                  [:db/add -2 :measurement/quantity 3]
+                                  [:db/add -2 :measurement/uom [:uom/uuid "86ExwnpDjvmBP8yN4HCL7"]]]})
+
+#_(d/transact
+   @db-conn
+   {:tx-data
+    [[:db/add [:recipe-line-item/uuid "-dwpppysMp8UchURG_AP0"] :recipe-line-item/company-item [:company-item/uuid "IQ1_T1dH6Uj3lsc4glpa9"]]]})
+
+
