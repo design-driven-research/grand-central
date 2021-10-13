@@ -1,12 +1,7 @@
 (ns rdd.grand-central.services.store
   (:require [datomic.client.api :as d]
-            [clojure.edn :as edn]
-            [rdd.grand-central.validation.db-spec :as db-spec]
-            [clojure.spec.alpha :as s]
-            [clojure.repl :refer [doc]]
-            [postmortem.core :as pm]
-            [spec-coerce.core :as sc]
-            [rdd.grand-central.db.core :as db-core]))
+            [rdd.grand-central.db.core :as db-core]
+            [spec-coerce.core :as sc]))
 
 (defn conn
   []
@@ -89,29 +84,17 @@
                 (db))))
 
 (defn coerce
+  "Coerce a datom based on a matching global spec."
   [datom]
   (let [[db-fn eid attr value] datom
         coerced (sc/coerce attr value)]
     [db-fn eid attr coerced]))
 
 (defn transact-from-remote!
+  "Process a remote transaction"
   [tx-data]
-  (pm/spy>> :from-remote tx-data)
   (let [coerced-tx-data (map coerce tx-data)]
     (d/transact (conn) {:tx-data coerced-tx-data})))
-
-#_(pm/reset!)
-#_(pm/log-for :from-remote)
-  ;; => [[[:db/add
-  ;;       [:recipe-line-item/uuid "nNN6y6ImyIHXPEcIOcHvZ"]
-  ;;       :recipe-line-item/company-item
-  ;;       [:company-item/uuid "e4OcffmS9HU-9FkLF0L6i"]]]]
-
-;; => [[[:db/add
-;;       [:recipe-line-item/uuid "YzZhgyPiLPCvI0TXclr9z"]
-;;       :recipe-line-item/company-item
-;;       [:company-item/uuid "7k_ebFF2lQLyj6vw9N0qd"]]]]
-
 
 (defn initial-data
   "Load initial data"

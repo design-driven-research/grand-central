@@ -1,14 +1,11 @@
 (ns rdd.grand-central.db.core
-  (:require
-   [mount.core :refer [defstate]]
-   [clojure.edn :as edn]
-   [datomic.client.api :as d]
-   [nano-id.core :refer [nano-id]]
-   [tick.core :as t]
-   [tick.locale-en-us]
-   [rdd.grand-central.utils.utils :refer [for-indexed spread-across-space]]
-   [postmortem.core :as pm]
-   [rdd.grand-central.config :refer [env]]))
+  (:require [clojure.edn :as edn]
+            [datomic.client.api :as d]
+            [mount.core :refer [defstate]]
+            [nano-id.core :refer [nano-id]]
+            [rdd.grand-central.utils.utils :refer [for-indexed spread-across-space]]
+            [tick.core :as t]
+            [tick.locale-en-us]))
 
 (declare install-schema reset-db! *reset-db!)
 
@@ -72,9 +69,6 @@
              :measurement/quantity quantity
              :measurement/uom [:uom/code uom]}
       company-item-sku (assoc :recipe-line-item/company-item [:company-item/sku company-item-sku]))))
-#_(pm/logs)
-#_(pm/reset!)
-
 
 (defn create-items
   [data]

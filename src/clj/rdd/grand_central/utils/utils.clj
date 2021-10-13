@@ -6,7 +6,6 @@
            ~index i#]
        ~@body)))
 
-
 (defn spread-across-space
   "Creates a lazy seq of position values based on the max space and the total items to spread across the space
    Example: (spread-across-space 1000 10) => (90 181 272 363 454 545 636 727 818 909)"
