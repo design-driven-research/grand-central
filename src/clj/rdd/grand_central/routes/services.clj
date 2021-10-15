@@ -65,7 +65,6 @@
                          {:status 200
                           :body {:result {:msg "Success"}}}))}}]
 
-
    ["/custom"
     ["/initial-data"
      {:get {:summary "Load initial data"
@@ -130,7 +129,14 @@
 
 
 #_(pm/reset!)
-#_(pm/logs)
+#_(pm/log-for :transactor)
+  ;; => [{:request-data [[:db/add [:recipe-line-item/uuid "N0s9TOLaGm-nxrmoUUsh8"] :measurement/quantity 4]]}
+  ;;     {:request-data [[:db/add [:recipe-line-item/uuid "jno0WN4RToRou6LDjdNlE"] :measurement/quantity 5]]}]
+
+  ;; => {:transactor
+  ;;     [{:request-data [[:db/add [:recipe-line-item/uuid "N0s9TOLaGm-nxrmoUUsh8"] :measurement/quantity 4]]}
+  ;;      {:request-data [[:db/add [:recipe-line-item/uuid "jno0WN4RToRou6LDjdNlE"] :measurement/quantity 5]]}]}
+
   ;; => {}
 
   ;; => {:transactor
@@ -156,3 +162,7 @@
   ;;         [:recipe-line-item/uuid "F7xaCMScCYL_mi-vYcFUx"]
   ;;         :recipe-line-item/company-item
   ;;         [:company-item/uuid "z5pIUOgcJK5LLGW5YUTXa"]]]}]}
+
+#_(pm/log-for :transactor)
+;; => [{:request-data [[:db/add [:recipe-line-item/uuid "N0s9TOLaGm-nxrmoUUsh8"] :measurement/quantity 4]]}
+;;     {:request-data [[:db/add [:recipe-line-item/uuid "jno0WN4RToRou6LDjdNlE"] :measurement/quantity 5]]}]

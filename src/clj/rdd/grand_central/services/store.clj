@@ -1,6 +1,8 @@
 (ns rdd.grand-central.services.store
   (:require [datomic.client.api :as d]
             [rdd.grand-central.db.core :as db-core]
+            [rdd.grand-central.validation.db-spec]
+            [clojure.spec.alpha :as s]
             [spec-coerce.core :as sc]))
 
 (defn conn
