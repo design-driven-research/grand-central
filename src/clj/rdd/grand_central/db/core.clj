@@ -18,6 +18,11 @@
            (*reset-db! new-client :seed-path "resources/seeds/simple.edn")
            new-client))
 
+(defn db
+  [& {:keys [conn]
+      :or {conn @db-conn}}]
+  (d/db conn))
+
 (defn load-schema-data
   [path]
   (-> (slurp path)
@@ -74,7 +79,7 @@
   [data]
   (for [{:as item
          :keys [name yield uom]} (:items data)]
-    (let [has-children? (:items item)
+    (let [has-children? (:line-items item)
           production-type (if has-children? :production.type/COMPOSITE :production.type/ATOM)]
       {:item/uuid (nano-id)
        :item/production-type production-type

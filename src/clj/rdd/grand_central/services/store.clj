@@ -90,7 +90,13 @@
   [datom]
   (let [[db-fn eid attr value] datom
         coerced (sc/coerce attr value)]
-    [db-fn eid attr coerced]))
+
+    (case db-fn
+      :db/add [db-fn eid attr coerced]
+      :db/retract (if coerced
+                    [db-fn eid attr coerced]
+                    [db-fn eid attr])
+      :db/retractEntity [db-fn eid])))
 
 (defn transact-from-remote!
   "Process a remote transaction"

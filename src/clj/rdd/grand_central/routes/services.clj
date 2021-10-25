@@ -60,7 +60,7 @@
                        (pm/spy>> :transactor {:request-data
                                               (-> request :body-params :tx-data)})
                        (let [tx-data (-> request :body-params :tx-data)
-                             result (store/transact-from-remote! tx-data)]
+                             result (#'store/transact-from-remote! tx-data)]
 
                          {:status 200
                           :body {:result {:msg "Success"}}}))}}]
