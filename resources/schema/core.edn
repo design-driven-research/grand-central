@@ -37,15 +37,9 @@
            :db/cardinality :db.cardinality/one}
 
           ;; Time
-          {:db/ident :time/interval
-           :db/doc "Time uom, seconds, minutes, hours as keyword"
-           :db/unique :db.unique/identity
-           :db/valueType :db.type/keyword
-           :db/cardinality :db.cardinality/one}
-
-          {:db/ident :time/name
-           :db/valueType :db.type/string
-           :db/cardinality :db.cardinality/one}
+          {:db/ident :time.interval/SECOND}
+          {:db/ident :time.interval/MINUTE}
+          {:db/ident :time.interval/HOUR}
 
           {:db/ident :time/duration
            :db/doc "A duration of time"

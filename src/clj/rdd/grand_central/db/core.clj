@@ -3,7 +3,8 @@
             [datomic.client.api :as d]
             [mount.core :refer [defstate]]
             [nano-id.core :refer [nano-id]]
-            [rdd.grand-central.utils.utils :refer [for-indexed spread-across-space]]
+            [rdd.grand-central.utils.utils :refer [for-indexed
+                                                   spread-across-space]]
             [tick.core :as t]
             [tick.locale-en-us]))
 
@@ -98,13 +99,6 @@
      :uom/name name
      :uom/code code}))
 
-(defn create-time-seed-data
-  [data]
-  (for [{:keys [name ident factor]} (:times data)]
-    {:time/interval ident
-     :time/name name
-     :scale/factor factor}))
-
 (defn create-role-seed-data
   [data]
   (for [{:keys [name cost duration duration-interval]} (:roles data)]
@@ -112,7 +106,7 @@
      :role/name name
      :currency.usd/cost cost
      :time/duration duration
-     :time/duration-interval [:time/interval duration-interval]}))
+     :time/duration-interval duration-interval}))
 
 (defn create-conversion-seed-data
   [data]
@@ -224,7 +218,7 @@
      :labor/role [:role/name role]
      :info/description description
      :time/duration duration
-     :time/duration-interval [:time/interval duration-interval]}))
+     :time/duration-interval duration-interval}))
 
 (defn create-item-processes
   [data]
@@ -270,7 +264,6 @@
       (d/transact conn {:tx-data (create-companies-seed-data seed-data)})
       (d/transact conn {:tx-data (create-uom-seed-data seed-data)})
 
-      (d/transact conn {:tx-data (create-time-seed-data seed-data)})
       (d/transact conn {:tx-data (create-role-seed-data seed-data)})
 
       (d/transact conn {:tx-data (create-items seed-data)})

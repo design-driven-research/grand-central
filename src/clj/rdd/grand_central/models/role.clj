@@ -7,8 +7,7 @@
 
 (defn roles
   []
-  (flatten (d/q '[:find (pull ?e [*
-                                  {:time/duration-interval [:time/interval]}])
+  (flatten (d/q '[:find (pull ?e [*])
                   :where [?e :role/uuid _]]
                 (db))))
 

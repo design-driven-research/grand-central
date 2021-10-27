@@ -1,13 +1,11 @@
 (ns rdd.grand-central.services.store
   (:require [datomic.client.api :as d]
             [rdd.grand-central.db.core :as db-core]
-            [rdd.grand-central.validation.db-spec]
-            [rdd.grand-central.models.process :as process]
-            [rdd.grand-central.models.labor :as labor]
-            [rdd.grand-central.models.time :as time]
-            [rdd.grand-central.models.role :as role]
             [rdd.grand-central.models.item :as item]
-            [clojure.spec.alpha :as s]
+            [rdd.grand-central.models.labor :as labor]
+            [rdd.grand-central.models.process :as process]
+            [rdd.grand-central.models.role :as role]
+            [rdd.grand-central.validation.db-spec]
             [spec-coerce.core :as sc]))
 
 (defn conn
@@ -106,8 +104,16 @@
 (defn transact-from-remote!
   "Process a remote transaction"
   [tx-data]
+  (tap> tx-data)
   (let [coerced-tx-data (map coerce tx-data)]
     (d/transact (conn) {:tx-data coerced-tx-data})))
+
+#_(d/transact (conn) {:tx-data [[:db/add [:process/uuid "L4dsfDL6CXnKixTMMmER6"] :measurement/quantity 2.0]]})
+#_(d/transact (conn) {:tx-data [[:db/add [:labor/uuid "BDi25fzfS1Fo5tCiAJNzJ"] :time/duration 20.2]]})
+
+#_(coerce [:db/add [:process/uuid "L4dsfDL6CXnKixTMMmER6"] :measurement/quantity 2])
+
+#_(transact-from-remote! [[:db/add [:process/uuid "L4dsfDL6CXnKixTMMmER6"] :measurement/uom [:uom/uuid "aeMR7eBO18F8olSmCJGsW"]]])
 
 (defn initial-data
   "Load initial data"
@@ -115,7 +121,6 @@
   {:items (item/items)
    :recipe-line-items (get-recipe-line-items)
    :uoms (get-uoms)
-   :times (time/times)
    :roles (role/roles)
    :companies (get-companies)
    :conversions (get-conversions)
