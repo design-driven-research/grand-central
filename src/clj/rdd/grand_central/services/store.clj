@@ -2,6 +2,11 @@
   (:require [datomic.client.api :as d]
             [rdd.grand-central.db.core :as db-core]
             [rdd.grand-central.validation.db-spec]
+            [rdd.grand-central.models.process :as process]
+            [rdd.grand-central.models.labor :as labor]
+            [rdd.grand-central.models.time :as time]
+            [rdd.grand-central.models.role :as role]
+            [rdd.grand-central.models.item :as item]
             [clojure.spec.alpha :as s]
             [spec-coerce.core :as sc]))
 
@@ -107,13 +112,17 @@
 (defn initial-data
   "Load initial data"
   []
-  {:items (get-items)
+  {:items (item/items)
    :recipe-line-items (get-recipe-line-items)
    :uoms (get-uoms)
+   :times (time/times)
+   :roles (role/roles)
    :companies (get-companies)
    :conversions (get-conversions)
    :company-items (get-company-items)
-   :quotes (get-quotes)})
+   :quotes (get-quotes)
+   :processes (process/processes)
+   :labor (labor/labor)})
 
 #_(defn item->tree
     [name]

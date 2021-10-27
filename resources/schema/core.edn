@@ -32,6 +32,63 @@
            :db/valueType :db.type/ref
            :db/cardinality :db.cardinality/one}
 
+          {:db/ident :item/process
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+          ;; Time
+          {:db/ident :time/interval
+           :db/doc "Time uom, seconds, minutes, hours as keyword"
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/keyword
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :time/name
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :time/duration
+           :db/doc "A duration of time"
+           :db/valueType :db.type/double
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :time/duration-interval
+           :db/doc "The duration interval used"
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+          ;; Roles
+          {:db/ident :role/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :role/name
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          ;; Process
+          {:db/ident :process/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :process/labor
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/many}
+
+          ;; Labor
+          {:db/ident :labor/uuid
+           :db/unique :db.unique/identity
+           :db/valueType :db.type/string
+           :db/cardinality :db.cardinality/one}
+
+          {:db/ident :labor/role
+           :db/valueType :db.type/ref
+           :db/cardinality :db.cardinality/one}
+
+
           ;; CompanyItems
           {:db/ident :company-item/uuid
            :db/unique :db.unique/identity
@@ -170,6 +227,12 @@
           {:db/ident :meta/position
            :db/valueType :db.type/long
            :db/cardinality :db.cardinality/one}
+
+          ;; Scaling
+          {:db/ident :scale/factor
+           :db/valueType :db.type/double
+           :db/cardinality :db.cardinality/one}
+
 
           ;; 
           ]}

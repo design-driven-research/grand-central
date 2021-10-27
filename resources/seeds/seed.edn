@@ -19,6 +19,22 @@
   {:name "Bunch" :code "bunch" :type :units.type/CUSTOM :system :units.system/CUSTOM}
   {:name "Leaf" :code "leaf" :type :units.type/CUSTOM :system :units.system/CUSTOM}]
 
+;;  Time
+ :times
+
+ [{:name "Seconds" :ident :second :factor 3600.0}
+  {:name "Minutes" :ident :minute :factor 60.0}
+  {:name "Hours" :ident :hour :factor 1.0}]
+
+;;  Roles
+ :roles
+
+ [{:name "Sauce master" :cost 50.0 :duration 1.0 :duration-interval :hour}
+  {:name "General prep" :cost 20.0 :duration 1.0 :duration-interval :hour}
+  {:name "Manager" :cost 100.0 :duration 1.0 :duration-interval :hour}
+  {:name "QA" :cost 50.00 :duration 1.0 :duration-interval :hour}
+  {:name "USDA" :cost 100.0 :duration 1.0 :duration-interval :hour}]
+
  ;;  The conversions between units of measure
  :conversions
 
@@ -34,7 +50,6 @@
    :to "gr"
    :quantity 1.0}]
 
-
 ;;  Seed items, both ingredient and recipe
  :items
 
@@ -49,6 +64,27 @@
   {:name "Sauce"
    :yield 1.0
    :uom "lb"
+   :process {:quantity 25.0
+             :uom "lb"
+             :labor [{:role "Sauce master"
+                      :description "Weigh and blend"
+                      :duration 10.0
+                      :duration-interval :minute}
+
+                     {:role "General prep"
+                      :description "Slice onions"
+                      :duration 25.0
+                      :duration-interval :minute}
+
+                     {:role "General prep"
+                      :description "Mix in chili flakes"
+                      :duration 25.0
+                      :duration-interval :minute}
+
+                     {:role "General prep"
+                      :description "Cool and transfer"
+                      :duration 15.0
+                      :duration-interval :minute}]}
    :line-items [{:name "Salt"
                  :quantity 1.0
                  :uom "lb"}
@@ -79,7 +115,18 @@
                  :uom "leaf"}
                 {:name "Cardamom"
                  :quantity 2.0
-                 :uom "gr"}]}]
+                 :uom "gr"}]
+   :process {:quantity 50.0
+             :uom "lb"
+             :labor [{:role "Sauce master"
+                      :description "Weigh and blend"
+                      :duration 10.0
+                      :duration-interval :minute}
+
+                     {:role "General prep"
+                      :description "Package position #1"
+                      :duration 10.0
+                      :duration-interval :minute}]}}]
 
 ;;  Prices
  :company-items

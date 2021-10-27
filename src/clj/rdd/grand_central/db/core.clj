@@ -15,7 +15,7 @@
   :start (let [new-client (d/client {:server-type :dev-local
                                      :storage-dir :mem
                                      :system "dev"})]
-           (*reset-db! new-client :seed-path "resources/seeds/simple.edn")
+           (*reset-db! new-client :seed-path "resources/seeds/seed.edn")
            new-client))
 
 (defn db
@@ -80,8 +80,10 @@
   (for [{:as item
          :keys [name yield uom]} (:items data)]
     (let [has-children? (:line-items item)
-          production-type (if has-children? :production.type/COMPOSITE :production.type/ATOM)]
-      {:item/uuid (nano-id)
+          production-type (if has-children? :production.type/COMPOSITE :production.type/ATOM)
+          temp-db-id name]
+      {:db/id temp-db-id
+       :item/uuid (nano-id)
        :item/production-type production-type
        :item/name name
        :measurement/uom [:uom/code uom]
@@ -95,6 +97,22 @@
      :uom/system system
      :uom/name name
      :uom/code code}))
+
+(defn create-time-seed-data
+  [data]
+  (for [{:keys [name ident factor]} (:times data)]
+    {:time/interval ident
+     :time/name name
+     :scale/factor factor}))
+
+(defn create-role-seed-data
+  [data]
+  (for [{:keys [name cost duration duration-interval]} (:roles data)]
+    {:role/uuid (nano-id)
+     :role/name name
+     :currency.usd/cost cost
+     :time/duration duration
+     :time/duration-interval [:time/interval duration-interval]}))
 
 (defn create-conversion-seed-data
   [data]
@@ -197,6 +215,46 @@
             [item-updates children]))
         flatten)))
 
+(defn create-labor-tx-data
+  [{:keys [role description duration duration-interval]}]
+  (let [uuid (nano-id)
+        temp-db-id uuid]
+    {:db/id temp-db-id
+     :labor/uuid uuid
+     :labor/role [:role/name role]
+     :info/description description
+     :time/duration duration
+     :time/duration-interval [:time/interval duration-interval]}))
+
+(defn create-item-processes
+  [data]
+
+  (let [items (:items data)
+        items-with-process (filter :process items)]
+    (-> (for [{:keys [name process]} items-with-process]
+          (let [process-uuid (nano-id)
+                process-temp-db-id process-uuid
+                quantity (:quantity process)
+                uom (:uom process)
+
+                labor-tx-data (map create-labor-tx-data (:labor process))
+
+                ;; Temp db ids for use in process
+                labor-ids (map :db/id labor-tx-data)
+
+                process-tx-data {:db/id process-temp-db-id
+                                 :process/uuid process-uuid
+                                 :measurement/quantity quantity
+                                 :measurement/uom [:uom/code uom]
+                                 :process/labor labor-ids}
+
+              ;; Update the parent with the recipe line items
+                item-tx-data {:db/id [:item/name name] :item/process process-temp-db-id}]
+
+          ;; Final results
+            [process-tx-data labor-tx-data item-tx-data]))
+        flatten)))
+
 (defn- *reset-db!
   [client & {:keys [db-name schema-path seed-path]
              :or {db-name "rdd"
@@ -211,17 +269,29 @@
       (tap> "Installing seed data")
       (d/transact conn {:tx-data (create-companies-seed-data seed-data)})
       (d/transact conn {:tx-data (create-uom-seed-data seed-data)})
+
+      (d/transact conn {:tx-data (create-time-seed-data seed-data)})
+      (d/transact conn {:tx-data (create-role-seed-data seed-data)})
+
       (d/transact conn {:tx-data (create-items seed-data)})
+
       (d/transact conn {:tx-data (create-conversion-seed-data seed-data)})
       (d/transact conn {:tx-data (create-company-items-data seed-data)})
-      (d/transact conn {:tx-data (create-recipes seed-data)}))
+      (d/transact conn {:tx-data (create-recipes seed-data)})
+
+      (d/transact conn {:tx-data (create-item-processes seed-data)}))
     (reset! db-conn conn)))
+
+
+#_(tap> (create-item-processes (load-seed-data "resources/seeds/seed.edn")))
+
+#_(d/transact @db-conn {:tx-data (create-item-processes (load-seed-data "resources/seeds/seed.edn"))})
 
 (defn reset-db!
   [& {:keys [seed?]
       :or {seed? true}}]
   (if seed?
-    (*reset-db! client :seed-path "resources/seeds/simple.edn")
+    (*reset-db! client :seed-path "resources/seeds/seed.edn")
     (*reset-db! client)))
 
 #_(reset-db!)
